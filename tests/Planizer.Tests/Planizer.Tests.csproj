@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.4" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Planizer.Core\Planizer.Core.csproj" />
+    <ProjectReference Include="..\..\src\Planizer.MsSql\Planizer.MsSql.csproj" />
+    <ProjectReference Include="..\..\src\Planizer.Cli\Planizer.Cli.csproj" />
+  </ItemGroup>
+
+  <!-- Glob on purpose: rule tasks only ADD .sql fixtures and never touch this csproj. -->
+  <ItemGroup>
+    <None Include="Fixtures/**/*.sql" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

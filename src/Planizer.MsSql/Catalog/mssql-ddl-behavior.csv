@@ -1,0 +1,32 @@
+operation_key,edition,min_version,lock,data_movement,reversible,notes
+add_column_nullable,any,any,schm_brief,metadata_only,yes,
+add_column_notnull_default_const,enterprise,any,schm_brief,metadata_only,yes,runtime constant default only
+add_column_notnull_default_const,standard_express,any,schm,rewrite,yes,entire table rewritten
+add_column_notnull_default_nondet,any,any,schm,rewrite,yes,per-row defaults (NEWID/NEWSEQUENTIALID) break metadata-only; statement-level runtime constants (GETDATE etc.) keep the fast path
+add_column_notnull_no_default,any,any,schm,fails_if_rows,yes,errors if table has rows
+alter_column_widen_varlen,any,any,schm_brief,metadata_only,no,varchar/nvarchar/varbinary n->m (m>n); back-narrowing is a rewrite
+alter_column_widen_to_max,any,any,schm,rewrite,no,n -> MAX is size-of-data
+alter_column_fixed_len_change,any,any,schm,rewrite,no,int->bigint / datetime->datetime2 / precision-scale
+alter_column_narrow,any,any,schm,rewrite,no,data loss + truncation failure risk
+alter_column_null_to_notnull,any,any,schm,full_scan,yes,fails if NULLs exist
+alter_column_notnull_to_null,any,any,schm_brief,metadata_only,yes,
+alter_column_collation,any,any,schm,rewrite,yes,dependent indexes must be dropped first
+drop_column,any,any,schm_brief,metadata_only,no,space not reclaimed until CLEANTABLE/rebuild
+add_computed_persisted,any,any,schm,full_scan,yes,
+data_compression_change,enterprise,any,schm,rewrite,yes,online rebuild possible
+data_compression_change,standard_express,2016sp1,schm,rewrite,yes,row/page compression standard since 2016 SP1
+create_clustered_index_on_heap,any,any,schm,rewrite,yes,all nonclustered indexes rebuilt
+drop_clustered_index,any,any,schm,rewrite,yes,table becomes heap; NC indexes rebuilt
+create_nonclustered_index_offline,any,any,s_table,index_build,yes,writes blocked during build
+create_index_online,enterprise,any,schm_brief,index_build,yes,brief Sch-M at start/end
+alter_index_rebuild_offline,any,any,schm,index_build,yes,
+alter_index_rebuild_online,enterprise,any,schm_brief,index_build,yes,resumable 2017+
+alter_index_reorganize,any,any,none,index_build,yes,always online
+add_check_or_fk,any,any,schm,full_scan,yes,WITH NOCHECK skips scan but constraint untrusted
+add_pk_or_unique,any,any,schm,index_build,yes,uniqueness validation scan
+drop_table,any,any,schm,none,no,
+truncate_table,any,any,schm,deallocate,no,rollback-able inside a transaction; fails with FK references
+sp_rename,any,any,schm_brief,metadata_only,with_script,dependencies not updated (deferred name resolution)
+alter_table_switch,any,any,schm_brief,metadata_only,yes,partition switch is metadata-only
+add_default_constraint,any,any,schm_brief,metadata_only,yes,default for an existing column: existing rows are not touched
+enable_disable_trigger,any,any,schm_brief,metadata_only,yes,flips the trigger's is_disabled flag; no data touched

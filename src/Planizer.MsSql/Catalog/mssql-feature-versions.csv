@@ -1,0 +1,50 @@
+feature_key,detect,pattern,min_version,note
+string_split,function,STRING_SPLIT,2016,
+openjson,statement,OpenJsonTableReference,2016,OPENJSON table-valued function
+openjson_function,function,OPENJSON,2016,OPENJSON as parsed by the 2014 grammar (a plain table-valued function call)
+json_value,function,JSON_VALUE,2016,
+json_query,function,JSON_QUERY,2016,
+json_modify,function,JSON_MODIFY,2016,
+isjson,function,ISJSON,2016,
+compress,function,COMPRESS,2016,
+decompress,function,DECOMPRESS,2016,
+datediff_big,function,DATEDIFF_BIG,2016,
+string_escape,function,STRING_ESCAPE,2016,
+session_context,function,SESSION_CONTEXT,2016,
+at_time_zone,statement,AtTimeZoneCall,2016,the AT TIME ZONE operator
+drop_if_exists,syntax,DROP … IF EXISTS,2016,rejected by the 2014 grammar; reported through the grammar re-parse path
+create_or_alter_procedure,statement,CreateOrAlterProcedureStatement,2016sp1,
+create_or_alter_function,statement,CreateOrAlterFunctionStatement,2016sp1,
+create_or_alter_view,statement,CreateOrAlterViewStatement,2016sp1,
+create_or_alter_trigger,statement,CreateOrAlterTriggerStatement,2016sp1,
+string_agg,function,STRING_AGG,2017,
+trim,function,TRIM,2017,
+concat_ws,function,CONCAT_WS,2017,
+translate,function,TRANSLATE,2017,
+resumable_index_rebuild,option,resumable_index_rebuild,2017,ALTER INDEX … REBUILD WITH (RESUMABLE = ON)
+resumable_create_index,option,resumable_create_index,2019,CREATE INDEX … WITH (RESUMABLE = ON)
+approx_count_distinct,function,APPROX_COUNT_DISTINCT,2019,
+greatest,function,GREATEST,2022,
+least,function,LEAST,2022,
+date_bucket,function,DATE_BUCKET,2022,
+datetrunc,function,DATETRUNC,2022,
+generate_series,function,GENERATE_SERIES,2022,
+json_path_exists,function,JSON_PATH_EXISTS,2022,
+json_object,function,JSON_OBJECT,2022,
+json_array,function,JSON_ARRAY,2022,
+approx_percentile_cont,function,APPROX_PERCENTILE_CONT,2022,
+approx_percentile_disc,function,APPROX_PERCENTILE_DISC,2022,
+bit_count,function,BIT_COUNT,2022,
+get_bit,function,GET_BIT,2022,
+set_bit,function,SET_BIT,2022,
+left_shift,function,LEFT_SHIFT,2022,
+right_shift,function,RIGHT_SHIFT,2022,
+ltrim_characters,function,LTRIM/2,2022,the second argument (characters to remove)
+rtrim_characters,function,RTRIM/2,2022,the second argument (characters to remove)
+string_split_ordinal,function,STRING_SPLIT/3,2022,the third argument (enable_ordinal)
+wait_at_low_priority_create_index,option,wait_at_low_priority_create_index,2022,CREATE INDEX … WITH (ONLINE = ON (WAIT_AT_LOW_PRIORITY (…)))
+wait_at_low_priority_index_rebuild,option,wait_at_low_priority_index_rebuild,2014,ALTER INDEX … REBUILD WITH (ONLINE = ON (WAIT_AT_LOW_PRIORITY (…)))
+trim_leading_trailing,syntax,TRIM(LEADING | TRAILING | BOTH … FROM …),2022,grammar re-parse path
+is_distinct_from,syntax,IS [NOT] DISTINCT FROM,2022,grammar re-parse path
+window_clause,syntax,WINDOW clause (named windows),2022,grammar re-parse path
+ledger_table,syntax,CREATE TABLE … WITH (LEDGER = ON),2022,grammar re-parse path

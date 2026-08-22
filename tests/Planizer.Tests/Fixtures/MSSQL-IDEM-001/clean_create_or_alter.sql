@@ -1,0 +1,10 @@
+-- CREATE OR ALTER (2016 SP1+) is idempotent by construction.
+-- expect-none: MSSQL-IDEM-001
+CREATE OR ALTER PROCEDURE dbo.GetOrders AS SELECT Id FROM dbo.Orders;
+GO
+CREATE OR ALTER VIEW dbo.OpenOrders AS SELECT Id FROM dbo.Orders WHERE Status = 1;
+GO
+CREATE OR ALTER FUNCTION dbo.OrderTotal (@Id int) RETURNS money AS BEGIN RETURN 0; END
+GO
+CREATE OR ALTER TRIGGER dbo.TR_Orders ON dbo.Orders AFTER INSERT AS SELECT 1;
+GO

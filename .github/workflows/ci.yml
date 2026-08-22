@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Build (Release, warnings as errors)
+        run: dotnet build --configuration Release
+
+      - name: Test
+        run: dotnet test --configuration Release --no-build --verbosity normal
+
+  # Exercises the composite action in action.yml exactly as a consumer would (`uses: ./`),
+  # on the samples/ directory, and pushes the resulting SARIF to code scanning.
+  self-check:
+    name: Action self-check (samples/)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+
+      # samples/ deliberately contains unsuppressed Blockers (MSSQL-LOCK-003: ONLINE = ON on
+      # Standard edition in 002; MSSQL-BATCH-001/002 in 005), so at fail-on: blocker the action
+      # must exit 1. The step is allowed to fail here; the next step asserts that the exit code
+      # was propagated.
+      - name: Analyze samples/ with the composite action
+        id: planizer
+        uses: ./
+        with:
+          path: samples
+          fail-on: blocker
+          sarif-file: planizer.sarif
+        continue-on-error: true
+
+      - name: Assert exit code and SARIF file
+        env:
+          EXIT_CODE: ${{ steps.planizer.outputs.exit-code }}
+          SARIF_FILE: ${{ steps.planizer.outputs.sarif-file }}
+        run: |
+          test "$EXIT_CODE" = "1" || { echo "expected exit code 1 (samples/ contains a Blocker), got '$EXIT_CODE'"; exit 1; }
+          test -s "$SARIF_FILE" || { echo "SARIF file '$SARIF_FILE' is missing or empty"; exit 1; }
+          python3 -c 'import json, sys; d = json.load(open(sys.argv[1])); print(len(d["runs"][0]["results"]), "SARIF results in", sys.argv[1])' "$SARIF_FILE"
+
+      # Advanced Security may be unavailable (private repo without it, fork PR with a
+      # read-only token): the upload is best effort and never fails the job.
+      - name: Upload SARIF to code scanning
+        if: ${{ !cancelled() && steps.planizer.outputs.sarif-file != '' }}
+        uses: github/codeql-action/upload-sarif@v3
+        continue-on-error: true
+        with:
+          sarif_file: ${{ steps.planizer.outputs.sarif-file }}
+          category: planizer-samples

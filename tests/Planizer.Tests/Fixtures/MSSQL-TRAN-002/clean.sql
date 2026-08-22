@@ -1,0 +1,6 @@
+-- Balanced: one BEGIN, one COMMIT.
+-- expect-none: MSSQL-TRAN-002
+SET XACT_ABORT ON;
+BEGIN TRAN;
+ALTER TABLE dbo.A ADD C1 int NULL;
+COMMIT;

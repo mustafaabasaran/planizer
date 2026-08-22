@@ -1,0 +1,2058 @@
+{
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "Planizer",
+          "semanticVersion": "0.1.0",
+          "informationUri": "https://github.com/mustafabasaran/planizer",
+          "rules": [
+            {
+              "id": "MSSQL-BATCH-001",
+              "name": "Column added in the same batch is referenced before GO",
+              "shortDescription": {
+                "text": "Column added in the same batch is referenced before GO"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-BATCH-001.md"
+              }
+            },
+            {
+              "id": "MSSQL-BATCH-002",
+              "name": "Variable declared in an earlier batch is used after GO",
+              "shortDescription": {
+                "text": "Variable declared in an earlier batch is used after GO"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-BATCH-002.md"
+              }
+            },
+            {
+              "id": "MSSQL-DYN-001",
+              "name": "Dynamic SQL cannot be analyzed statically",
+              "shortDescription": {
+                "text": "Dynamic SQL cannot be analyzed statically"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-DYN-001.md"
+              }
+            },
+            {
+              "id": "MSSQL-ENV-001",
+              "name": "USE [database] overrides the migration runner's target database",
+              "shortDescription": {
+                "text": "USE [database] overrides the migration runner's target database"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-ENV-001.md"
+              }
+            },
+            {
+              "id": "MSSQL-ENV-002",
+              "name": "Linked-server or cross-database reference ties the script to one environment",
+              "shortDescription": {
+                "text": "Linked-server or cross-database reference ties the script to one environment"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-ENV-002.md"
+              }
+            },
+            {
+              "id": "MSSQL-ENV-003",
+              "name": "Long-running DDL with no progress messages",
+              "shortDescription": {
+                "text": "Long-running DDL with no progress messages"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-ENV-003.md"
+              }
+            },
+            {
+              "id": "MSSQL-IDEM-001",
+              "name": "CREATE without an existence check is not re-runnable",
+              "shortDescription": {
+                "text": "CREATE without an existence check is not re-runnable"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-IDEM-001.md"
+              }
+            },
+            {
+              "id": "MSSQL-IDEM-002",
+              "name": "ALTER TABLE ADD/DROP without an existence check is not re-runnable",
+              "shortDescription": {
+                "text": "ALTER TABLE ADD/DROP without an existence check is not re-runnable"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-IDEM-002.md"
+              }
+            },
+            {
+              "id": "MSSQL-IDEM-003",
+              "name": "DROP without IF EXISTS is not re-runnable",
+              "shortDescription": {
+                "text": "DROP without IF EXISTS is not re-runnable"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-IDEM-003.md"
+              }
+            },
+            {
+              "id": "MSSQL-LIM-001",
+              "name": "Index key exceeds the column-count or byte-size limit",
+              "shortDescription": {
+                "text": "Index key exceeds the column-count or byte-size limit"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-LIM-001.md"
+              }
+            },
+            {
+              "id": "MSSQL-LIM-002",
+              "name": "Identifier longer than SQL Server allows",
+              "shortDescription": {
+                "text": "Identifier longer than SQL Server allows"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-LIM-002.md"
+              }
+            },
+            {
+              "id": "MSSQL-LIT-001",
+              "name": "Non-ASCII string literal without the N prefix",
+              "shortDescription": {
+                "text": "Non-ASCII string literal without the N prefix"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-LIT-001.md"
+              }
+            },
+            {
+              "id": "MSSQL-LOCK-001",
+              "name": "Schema modification lock (Sch-M) blocks all access to the table",
+              "shortDescription": {
+                "text": "Schema modification lock (Sch-M) blocks all access to the table"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-LOCK-001.md"
+              }
+            },
+            {
+              "id": "MSSQL-LOCK-002",
+              "name": "Offline index build blocks access to the table",
+              "shortDescription": {
+                "text": "Offline index build blocks access to the table"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-LOCK-002.md"
+              }
+            },
+            {
+              "id": "MSSQL-LOCK-003",
+              "name": "ONLINE = ON is not available on this edition",
+              "shortDescription": {
+                "text": "ONLINE = ON is not available on this edition"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-LOCK-003.md"
+              }
+            },
+            {
+              "id": "MSSQL-LOCK-004",
+              "name": "Online index operation without WAIT_AT_LOW_PRIORITY",
+              "shortDescription": {
+                "text": "Online index operation without WAIT_AT_LOW_PRIORITY"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-LOCK-004.md"
+              }
+            },
+            {
+              "id": "MSSQL-LOCK-005",
+              "name": "Online index operation without RESUMABLE",
+              "shortDescription": {
+                "text": "Online index operation without RESUMABLE"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-LOCK-005.md"
+              }
+            },
+            {
+              "id": "MSSQL-LOCK-006",
+              "name": "Offline index rebuild blocks all access to the table",
+              "shortDescription": {
+                "text": "Offline index rebuild blocks all access to the table"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-LOCK-006.md"
+              }
+            },
+            {
+              "id": "MSSQL-LOCK-007",
+              "name": "Multiple Sch-M locks held until COMMIT in one transaction",
+              "shortDescription": {
+                "text": "Multiple Sch-M locks held until COMMIT in one transaction"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-LOCK-007.md"
+              }
+            },
+            {
+              "id": "MSSQL-LOCK-008",
+              "name": "Sch-M locks on multiple tables in one transaction (deadlock potential)",
+              "shortDescription": {
+                "text": "Sch-M locks on multiple tables in one transaction (deadlock potential)"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-LOCK-008.md"
+              }
+            },
+            {
+              "id": "MSSQL-LOCK-009",
+              "name": "Unbounded UPDATE/DELETE escalates to a table lock",
+              "shortDescription": {
+                "text": "Unbounded UPDATE/DELETE escalates to a table lock"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-LOCK-009.md"
+              }
+            },
+            {
+              "id": "MSSQL-LOCK-010",
+              "name": "Transactional DDL without SET LOCK_TIMEOUT",
+              "shortDescription": {
+                "text": "Transactional DDL without SET LOCK_TIMEOUT"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-LOCK-010.md"
+              }
+            },
+            {
+              "id": "MSSQL-PARSE-001",
+              "name": "SQL script does not parse (produced by the analyzer itself)",
+              "shortDescription": {
+                "text": "SQL script does not parse (produced by the analyzer itself)"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-PARSE-001.md"
+              }
+            },
+            {
+              "id": "MSSQL-REV-001",
+              "name": "Statement is irreversible; data cannot be restored",
+              "shortDescription": {
+                "text": "Statement is irreversible; data cannot be restored"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-REV-001.md"
+              }
+            },
+            {
+              "id": "MSSQL-REV-002",
+              "name": "No automatic rollback statement could be generated",
+              "shortDescription": {
+                "text": "No automatic rollback statement could be generated"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-REV-002.md"
+              }
+            },
+            {
+              "id": "MSSQL-REV-003",
+              "name": "sp_rename leaves dependent objects pointing at the old name",
+              "shortDescription": {
+                "text": "sp_rename leaves dependent objects pointing at the old name"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-REV-003.md"
+              }
+            },
+            {
+              "id": "MSSQL-REV-004",
+              "name": "TRUNCATE TABLE: rollback window and FK restrictions",
+              "shortDescription": {
+                "text": "TRUNCATE TABLE: rollback window and FK restrictions"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-REV-004.md"
+              }
+            },
+            {
+              "id": "MSSQL-REV-005",
+              "name": "SET IDENTITY_INSERT ON is never turned OFF",
+              "shortDescription": {
+                "text": "SET IDENTITY_INSERT ON is never turned OFF"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-REV-005.md"
+              }
+            },
+            {
+              "id": "MSSQL-RW-001",
+              "name": "Adding a nullable column without a default is metadata-only",
+              "shortDescription": {
+                "text": "Adding a nullable column without a default is metadata-only"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-RW-001.md"
+              }
+            },
+            {
+              "id": "MSSQL-RW-002",
+              "name": "Adding a NOT NULL column with a default may rewrite the entire table",
+              "shortDescription": {
+                "text": "Adding a NOT NULL column with a default may rewrite the entire table"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-RW-002.md"
+              }
+            },
+            {
+              "id": "MSSQL-RW-003",
+              "name": "Adding a NOT NULL column without a default fails on a non-empty table",
+              "shortDescription": {
+                "text": "Adding a NOT NULL column without a default fails on a non-empty table"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-RW-003.md"
+              }
+            },
+            {
+              "id": "MSSQL-RW-004",
+              "name": "Altering a column to a MAX type rewrites the column data",
+              "shortDescription": {
+                "text": "Altering a column to a MAX type rewrites the column data"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-RW-004.md"
+              }
+            },
+            {
+              "id": "MSSQL-RW-005",
+              "name": "Column type change may rewrite the table depending on the current type",
+              "shortDescription": {
+                "text": "Column type change may rewrite the table depending on the current type"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-RW-005.md"
+              }
+            },
+            {
+              "id": "MSSQL-RW-006",
+              "name": "Narrowing a column loses data and risks truncation failures",
+              "shortDescription": {
+                "text": "Narrowing a column loses data and risks truncation failures"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-RW-006.md"
+              }
+            },
+            {
+              "id": "MSSQL-RW-007",
+              "name": "Altering a column to NOT NULL scans the whole table and fails on NULLs",
+              "shortDescription": {
+                "text": "Altering a column to NOT NULL scans the whole table and fails on NULLs"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-RW-007.md"
+              }
+            },
+            {
+              "id": "MSSQL-RW-008",
+              "name": "Altering a column to NULL is metadata-only",
+              "shortDescription": {
+                "text": "Altering a column to NULL is metadata-only"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-RW-008.md"
+              }
+            },
+            {
+              "id": "MSSQL-RW-009",
+              "name": "Changing a column collation rewrites the column and needs dependent indexes dropped",
+              "shortDescription": {
+                "text": "Changing a column collation rewrites the column and needs dependent indexes dropped"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-RW-009.md"
+              }
+            },
+            {
+              "id": "MSSQL-RW-010",
+              "name": "Dropping a column does not reclaim its space",
+              "shortDescription": {
+                "text": "Dropping a column does not reclaim its space"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-RW-010.md"
+              }
+            },
+            {
+              "id": "MSSQL-RW-011",
+              "name": "Adding a PERSISTED computed column scans and writes the whole table",
+              "shortDescription": {
+                "text": "Adding a PERSISTED computed column scans and writes the whole table"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-RW-011.md"
+              }
+            },
+            {
+              "id": "MSSQL-RW-012",
+              "name": "Changing DATA_COMPRESSION rewrites the whole table or index",
+              "shortDescription": {
+                "text": "Changing DATA_COMPRESSION rewrites the whole table or index"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-RW-012.md"
+              }
+            },
+            {
+              "id": "MSSQL-RW-013",
+              "name": "Creating or dropping a clustered index rewrites the entire table",
+              "shortDescription": {
+                "text": "Creating or dropping a clustered index rewrites the entire table"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-RW-013.md"
+              }
+            },
+            {
+              "id": "MSSQL-RW-014",
+              "name": "Adding a CHECK/FOREIGN KEY constraint scans all existing rows",
+              "shortDescription": {
+                "text": "Adding a CHECK/FOREIGN KEY constraint scans all existing rows"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-RW-014.md"
+              }
+            },
+            {
+              "id": "MSSQL-RW-015",
+              "name": "Adding a PRIMARY KEY/UNIQUE constraint builds an index with a uniqueness scan",
+              "shortDescription": {
+                "text": "Adding a PRIMARY KEY/UNIQUE constraint builds an index with a uniqueness scan"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-RW-015.md"
+              }
+            },
+            {
+              "id": "MSSQL-RW-016",
+              "name": "Row width against the 8060-byte in-row limit",
+              "shortDescription": {
+                "text": "Row width against the 8060-byte in-row limit"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-RW-016.md"
+              }
+            },
+            {
+              "id": "MSSQL-SET-001",
+              "name": "Filtered index / PERSISTED computed column needs QUOTED_IDENTIFIER and ANSI_NULLS ON",
+              "shortDescription": {
+                "text": "Filtered index / PERSISTED computed column needs QUOTED_IDENTIFIER and ANSI_NULLS ON"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-SET-001.md"
+              }
+            },
+            {
+              "id": "MSSQL-SET-002",
+              "name": "Many DML statements without SET NOCOUNT ON",
+              "shortDescription": {
+                "text": "Many DML statements without SET NOCOUNT ON"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-SET-002.md"
+              }
+            },
+            {
+              "id": "MSSQL-TRAN-001",
+              "name": "Explicit transaction without SET XACT_ABORT ON",
+              "shortDescription": {
+                "text": "Explicit transaction without SET XACT_ABORT ON"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-TRAN-001.md"
+              }
+            },
+            {
+              "id": "MSSQL-TRAN-002",
+              "name": "Unbalanced BEGIN TRAN / COMMIT / ROLLBACK",
+              "shortDescription": {
+                "text": "Unbalanced BEGIN TRAN / COMMIT / ROLLBACK"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-TRAN-002.md"
+              }
+            },
+            {
+              "id": "MSSQL-TRAN-003",
+              "name": "Transaction spans GO batches",
+              "shortDescription": {
+                "text": "Transaction spans GO batches"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-TRAN-003.md"
+              }
+            },
+            {
+              "id": "MSSQL-TRAN-004",
+              "name": "BEGIN TRAN inside TRY without ROLLBACK in CATCH",
+              "shortDescription": {
+                "text": "BEGIN TRAN inside TRY without ROLLBACK in CATCH"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-TRAN-004.md"
+              }
+            },
+            {
+              "id": "MSSQL-TRAN-005",
+              "name": "CATCH block swallows the error",
+              "shortDescription": {
+                "text": "CATCH block swallows the error"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-TRAN-005.md"
+              }
+            },
+            {
+              "id": "MSSQL-TRAN-006",
+              "name": "Long explicit transaction",
+              "shortDescription": {
+                "text": "Long explicit transaction"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-TRAN-006.md"
+              }
+            },
+            {
+              "id": "MSSQL-VER-001",
+              "name": "Feature not available on the target SQL Server version",
+              "shortDescription": {
+                "text": "Feature not available on the target SQL Server version"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "docs": "docs/rules/MSSQL-VER-001.md"
+              }
+            }
+          ]
+        }
+      },
+      "invocations": [
+        {
+          "executionSuccessful": true
+        }
+      ],
+      "originalUriBaseIds": {
+        "%SRCROOT%": {
+          "uri": "file:///workspace/planizer/"
+        }
+      },
+      "results": [
+        {
+          "ruleId": "MSSQL-BATCH-001",
+          "ruleIndex": 0,
+          "level": "error",
+          "message": {
+            "text": "This statement references column dbo.Orders.PaymentTypeId (added at line 25) in the same batch; a batch is compiled as a whole before any statement in it runs, so the column does not exist yet at compile time and the batch fails with error 207 (Invalid column name 'PaymentTypeId').\n\nFix: Put GO after line 25 so this statement compiles in a later batch; where GO is not available, run it as dynamic SQL so it compiles after the ALTER: EXEC sp_executesql N'UPDATE dbo.Orders SET PaymentTypeId = 1 WHERE PaidAt IS NOT NULL;';"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/005_bad_batching.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 27,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "Blocker",
+            "inconclusive": false,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "UPDATE dbo.Orders SET PaymentTypeId = 1 WHERE PaidAt IS NOT NULL;"
+          }
+        },
+        {
+          "ruleId": "MSSQL-BATCH-002",
+          "ruleIndex": 1,
+          "level": "error",
+          "message": {
+            "text": "@now is used here but was declared at line 10 in an earlier batch; GO ends the scope of every variable, so this batch fails to compile with error 137 (Must declare the scalar variable \"@now\").\n\nFix: Re-declare in this batch, before the first use:\nDECLARE @now datetime2(3) = SYSUTCDATETIME();"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/005_bad_batching.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 32,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "Blocker",
+            "inconclusive": false,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "UPDATE o SET o.PaymentTypeId = l.PaymentTypeId FROM dbo.Orders AS o JOIN [LegacyDb].dbo.LegacyPaymentMap AS l ON l.Order"
+          }
+        },
+        {
+          "ruleId": "MSSQL-ENV-001",
+          "ruleIndex": 3,
+          "level": "note",
+          "message": {
+            "text": "USE Orders pins the script to a database name: the migration runner already connects to the target database, and on an environment where the name differs the script fails or runs against the wrong database.\n\nFix: Remove the USE statement and let the runner's connection choose the database."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/005_bad_batching.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "Info",
+            "inconclusive": false,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "USE [Orders];"
+          }
+        },
+        {
+          "ruleId": "MSSQL-ENV-002",
+          "ruleIndex": 4,
+          "level": "note",
+          "message": {
+            "text": "1 statement in this file references 1 other database by name (LegacyDb), e.g. LegacyDb.dbo.LegacyPaymentMap: the script only runs where that database exists under exactly that name.\n\nFix: Reference other databases through synonyms created per environment (CREATE SYNONYM dbo.X FOR [OtherDb].dbo.X), or move the dependency out of the migration."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/005_bad_batching.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 32,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "Info",
+            "inconclusive": false,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "UPDATE o SET o.PaymentTypeId = l.PaymentTypeId FROM dbo.Orders AS o JOIN [LegacyDb].dbo.LegacyPaymentMap AS l ON l.Order"
+          }
+        },
+        {
+          "ruleId": "MSSQL-ENV-003",
+          "ruleIndex": 5,
+          "level": "note",
+          "message": {
+            "text": "2 statements in this file rewrite, scan or build an index over a whole table (`ALTER TABLE dbo.Orders ADD Status tinyint NOT NULL CONSTRAI…`, `CREATE NONCLUSTERED INDEX IX_Orders_Status ON dbo.Orders (S…`) and the script prints no progress message: a long run is silent until it finishes or fails, with no way to tell which step is taking the time.\n\nFix: Announce each step so the runner log shows where the script is, e.g. before each long statement:\nRAISERROR('step: <description>', 0, 1) WITH NOWAIT;"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/001_add_status_column.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "Info",
+            "inconclusive": false,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "ALTER TABLE dbo.Orders ADD Status tinyint NOT NULL CONSTRAINT DF_Orders_Status DEFAULT (0);"
+          }
+        },
+        {
+          "ruleId": "MSSQL-ENV-003",
+          "ruleIndex": 5,
+          "level": "note",
+          "message": {
+            "text": "3 statements in this file rewrite, scan or build an index over a whole table (`ALTER INDEX IX_Orders_CustomerId ON dbo.Orders REBUILD;`, `ALTER INDEX ALL ON dbo.OrderLines REORGANIZE;`, `CREATE UNIQUE CLUSTERED INDEX IX_LegacyEvents_EventId ON db…`) and the script prints no progress message: a long run is silent until it finishes or fails, with no way to tell which step is taking the time.\n\nFix: Announce each step so the runner log shows where the script is, e.g. before each long statement:\nRAISERROR('step: <description>', 0, 1) WITH NOWAIT;"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/002_rebuild_indexes.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 6,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "Info",
+            "inconclusive": false,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "ALTER INDEX IX_Orders_CustomerId ON dbo.Orders REBUILD;"
+          }
+        },
+        {
+          "ruleId": "MSSQL-ENV-003",
+          "ruleIndex": 5,
+          "level": "note",
+          "message": {
+            "text": "2 statements in this file rewrite, scan or build an index over a whole table (`ALTER TABLE dbo.CustomerContactPreference WITH CHECK ADD CO…`, `CREATE NONCLUSTERED INDEX IX_CustomerContactPreference_Cust…`) and the script prints no progress message: a long run is silent until it finishes or fails, with no way to tell which step is taking the time.\n\nFix: Announce each step so the runner log shows where the script is, e.g. before each long statement:\nRAISERROR('step: <description>', 0, 1) WITH NOWAIT;"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/004_idempotent_migration.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 28,
+                  "startColumn": 5
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "Info",
+            "inconclusive": false,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "ALTER TABLE dbo.CustomerContactPreference WITH CHECK ADD CONSTRAINT FK_CustomerContactPreference_Customer FOREIGN KEY (C"
+          }
+        },
+        {
+          "ruleId": "MSSQL-IDEM-001",
+          "ruleIndex": 6,
+          "level": "warning",
+          "message": {
+            "text": "CREATE INDEX IX_Orders_Status is not guarded by an existence check; running the script a second time fails because the index already exists (error 1913).\n\nFix: Guard it: IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_Orders_Status' AND object_id = OBJECT_ID(N'dbo.Orders')) BEGIN CREATE INDEX IX_Orders_Status … END"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/001_add_status_column.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 23,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "Warning",
+            "inconclusive": false,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "CREATE NONCLUSTERED INDEX IX_Orders_Status ON dbo.Orders (Status) INCLUDE (CustomerId);"
+          }
+        },
+        {
+          "ruleId": "MSSQL-IDEM-001",
+          "ruleIndex": 6,
+          "level": "warning",
+          "message": {
+            "text": "CREATE INDEX IX_LegacyEvents_EventId is not guarded by an existence check; running the script a second time fails because the index already exists (error 1913).\n\nFix: Guard it: IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_LegacyEvents_EventId' AND object_id = OBJECT_ID(N'dbo.LegacyEvents')) BEGIN CREATE INDEX IX_LegacyEvents_EventId … END"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/002_rebuild_indexes.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "Warning",
+            "inconclusive": false,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "CREATE UNIQUE CLUSTERED INDEX IX_LegacyEvents_EventId ON dbo.LegacyEvents (EventId);"
+          }
+        },
+        {
+          "ruleId": "MSSQL-IDEM-001",
+          "ruleIndex": 6,
+          "level": "warning",
+          "message": {
+            "text": "CREATE INDEX IX_OrderLines_ProductId is not guarded by an existence check; running the script a second time fails because the index already exists (error 1913).\n\nFix: Guard it: IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_OrderLines_ProductId' AND object_id = OBJECT_ID(N'dbo.OrderLines')) BEGIN CREATE INDEX IX_OrderLines_ProductId … END"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/002_rebuild_indexes.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "Warning",
+            "inconclusive": false,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "CREATE NONCLUSTERED INDEX IX_OrderLines_ProductId ON dbo.OrderLines (ProductId, WarehouseId) WITH (ONLINE = ON);"
+          }
+        },
+        {
+          "ruleId": "MSSQL-IDEM-001",
+          "ruleIndex": 6,
+          "level": "warning",
+          "message": {
+            "text": "CREATE TABLE dbo.PaymentType is not guarded by an existence check; running the script a second time fails because the table already exists (error 2714).\n\nFix: Guard it: IF OBJECT_ID(N'dbo.PaymentType', N'U') IS NULL BEGIN CREATE TABLE dbo.PaymentType … END"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/005_bad_batching.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 14,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "Warning",
+            "inconclusive": false,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "CREATE TABLE dbo.PaymentType ( Id tinyint NOT NULL CONSTRAINT PK_PaymentType PRIMARY KEY, Name nvarchar(50) NOT NULL );"
+          }
+        },
+        {
+          "ruleId": "MSSQL-IDEM-002",
+          "ruleIndex": 7,
+          "level": "warning",
+          "message": {
+            "text": "ALTER TABLE dbo.Orders ADD column Status is not guarded by an existence check; running the script a second time fails because the column already exists (error 2705).\n\nFix: Guard it: IF COL_LENGTH(N'dbo.Orders', N'Status') IS NULL ALTER TABLE dbo.Orders ADD Status tinyint NOT NULL CONSTRAINT DF_Orders_Status DEFAULT (0);"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/001_add_status_column.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "Warning",
+            "inconclusive": false,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "ALTER TABLE dbo.Orders ADD Status tinyint NOT NULL CONSTRAINT DF_Orders_Status DEFAULT (0);"
+          }
+        },
+        {
+          "ruleId": "MSSQL-IDEM-002",
+          "ruleIndex": 7,
+          "level": "warning",
+          "message": {
+            "text": "ALTER TABLE dbo.Orders ADD column StatusChangedAt is not guarded by an existence check; running the script a second time fails because the column already exists (error 2705).\n\nFix: Guard it: IF COL_LENGTH(N'dbo.Orders', N'StatusChangedAt') IS NULL ALTER TABLE dbo.Orders ADD StatusChangedAt datetime2(3) NULL;"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/001_add_status_column.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "Warning",
+            "inconclusive": false,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "ALTER TABLE dbo.Orders ADD StatusChangedAt datetime2(3) NULL;"
+          }
+        },
+        {
+          "ruleId": "MSSQL-IDEM-002",
+          "ruleIndex": 7,
+          "level": "warning",
+          "message": {
+            "text": "ALTER TABLE dbo.Orders ADD column PaymentTypeId is not guarded by an existence check; running the script a second time fails because the column already exists (error 2705).\n\nFix: Guard it: IF COL_LENGTH(N'dbo.Orders', N'PaymentTypeId') IS NULL ALTER TABLE dbo.Orders ADD PaymentTypeId tinyint NULL;"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/005_bad_batching.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 25,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "Warning",
+            "inconclusive": false,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "ALTER TABLE dbo.Orders ADD PaymentTypeId tinyint NULL;"
+          }
+        },
+        {
+          "ruleId": "MSSQL-IDEM-003",
+          "ruleIndex": 8,
+          "level": "warning",
+          "message": {
+            "text": "DROP TABLE dbo.OrderAudit_Legacy is not guarded by an existence check; running the script when the table is already gone fails (error 3701).\n\nFix: Use DROP TABLE IF EXISTS dbo.OrderAudit_Legacy;"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/003_cleanup_legacy.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 6,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "Warning",
+            "inconclusive": false,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "DROP TABLE dbo.OrderAudit_Legacy;"
+          }
+        },
+        {
+          "ruleId": "MSSQL-LIT-001",
+          "ruleIndex": 11,
+          "level": "warning",
+          "message": {
+            "text": "2 string literals in this file contain non-ASCII characters without the N prefix (first: 'Kredi Kartı' at line 21; also 'Kapıda Ödeme'). Without N the literal is varchar in the database's default collation: characters outside that collation's code page are replaced by '?' before the value ever reaches an nvarchar column.\n\nFix: Prefix the literals with N: N'Kredi Kartı' (and the 1 other)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/005_bad_batching.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 20,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "Warning",
+            "inconclusive": false,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "INSERT INTO dbo.PaymentType (Id, Name) VALUES (1, 'Kredi Kartı'), (2, 'Havale / EFT'), (3, 'Kapıda Ödeme');"
+          }
+        },
+        {
+          "ruleId": "MSSQL-LOCK-001",
+          "ruleIndex": 12,
+          "level": "note",
+          "message": {
+            "text": "ADD COLUMN Status takes a schema-modification (Sch-M) lock on dbo.Orders, held for the duration of the operation; all reads and writes are blocked."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/001_add_status_column.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "Info",
+            "inconclusive": false,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "ALTER TABLE dbo.Orders ADD Status tinyint NOT NULL CONSTRAINT DF_Orders_Status DEFAULT (0);"
+          }
+        },
+        {
+          "ruleId": "MSSQL-LOCK-001",
+          "ruleIndex": 12,
+          "level": "note",
+          "message": {
+            "text": "ADD COLUMN StatusChangedAt takes a brief schema-modification (Sch-M) lock on dbo.Orders; metadata-only change, blocking is momentary."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/001_add_status_column.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "Info",
+            "inconclusive": false,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "ALTER TABLE dbo.Orders ADD StatusChangedAt datetime2(3) NULL;"
+          }
+        },
+        {
+          "ruleId": "MSSQL-LOCK-001",
+          "ruleIndex": 12,
+          "level": "note",
+          "message": {
+            "text": "DROP TABLE takes a schema-modification (Sch-M) lock on dbo.OrderAudit_Legacy, held for the duration of the operation; all reads and writes are blocked."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/003_cleanup_legacy.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 6,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "Info",
+            "inconclusive": false,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "DROP TABLE dbo.OrderAudit_Legacy;"
+          }
+        },
+        {
+          "ruleId": "MSSQL-LOCK-001",
+          "ruleIndex": 12,
+          "level": "note",
+          "message": {
+            "text": "sp_rename takes a brief schema-modification (Sch-M) lock on dbo.Customers; metadata-only change, blocking is momentary."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/003_cleanup_legacy.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 9,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "Info",
+            "inconclusive": false,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "EXEC sp_rename 'dbo.Customers.Fax', 'Fax_deprecated', 'COLUMN';"
+          }
+        },
+        {
+          "ruleId": "MSSQL-LOCK-001",
+          "ruleIndex": 12,
+          "level": "note",
+          "message": {
+            "text": "TRUNCATE TABLE takes a schema-modification (Sch-M) lock on dbo.StagingImport, held for the duration of the operation; all reads and writes are blocked."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/003_cleanup_legacy.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 15,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "Info",
+            "inconclusive": false,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "TRUNCATE TABLE dbo.StagingImport;"
+          }
+        },
+        {
+          "ruleId": "MSSQL-LOCK-001",
+          "ruleIndex": 12,
+          "level": "note",
+          "message": {
+            "text": "ADD CONSTRAINT FK_CustomerContactPreference_Customer takes a schema-modification (Sch-M) lock on dbo.CustomerContactPreference, held for the duration of the operation; all reads and writes are blocked."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/004_idempotent_migration.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 28,
+                  "startColumn": 5
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "Info",
+            "inconclusive": false,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "ALTER TABLE dbo.CustomerContactPreference WITH CHECK ADD CONSTRAINT FK_CustomerContactPreference_Customer FOREIGN KEY (C"
+          }
+        },
+        {
+          "ruleId": "MSSQL-LOCK-001",
+          "ruleIndex": 12,
+          "level": "note",
+          "message": {
+            "text": "ADD COLUMN PreferredChannel takes a brief schema-modification (Sch-M) lock on dbo.Customers; metadata-only change, blocking is momentary."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/004_idempotent_migration.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 34,
+                  "startColumn": 5
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "Info",
+            "inconclusive": false,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "ALTER TABLE dbo.Customers ADD PreferredChannel tinyint NULL;"
+          }
+        },
+        {
+          "ruleId": "MSSQL-LOCK-001",
+          "ruleIndex": 12,
+          "level": "note",
+          "message": {
+            "text": "ADD COLUMN PaymentTypeId takes a brief schema-modification (Sch-M) lock on dbo.Orders; metadata-only change, blocking is momentary."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/005_bad_batching.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 25,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "Info",
+            "inconclusive": false,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "ALTER TABLE dbo.Orders ADD PaymentTypeId tinyint NULL;"
+          }
+        },
+        {
+          "ruleId": "MSSQL-LOCK-002",
+          "ruleIndex": 13,
+          "level": "warning",
+          "message": {
+            "text": "Offline nonclustered index build takes a shared (S) lock on dbo.Orders: writes blocked during build.\n\nFix: ONLINE index build is not available on Standard edition; schedule a maintenance window."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/001_add_status_column.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 23,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "Warning",
+            "inconclusive": false,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "CREATE NONCLUSTERED INDEX IX_Orders_Status ON dbo.Orders (Status) INCLUDE (CustomerId);"
+          }
+        },
+        {
+          "ruleId": "MSSQL-LOCK-002",
+          "ruleIndex": 13,
+          "level": "warning",
+          "message": {
+            "text": "Offline clustered index build takes a schema-modification (Sch-M) lock on dbo.LegacyEvents: all access blocked until the build completes.\n\nFix: ONLINE index build is not available on Standard edition; schedule a maintenance window."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/002_rebuild_indexes.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "Warning",
+            "inconclusive": false,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "CREATE UNIQUE CLUSTERED INDEX IX_LegacyEvents_EventId ON dbo.LegacyEvents (EventId);"
+          }
+        },
+        {
+          "ruleId": "MSSQL-LOCK-002",
+          "ruleIndex": 13,
+          "level": "warning",
+          "message": {
+            "text": "Offline nonclustered index build takes a shared (S) lock on dbo.CustomerContactPreference: writes blocked during build.\n\nFix: ONLINE index build is not available on Standard edition; schedule a maintenance window."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/004_idempotent_migration.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 63,
+                  "startColumn": 5
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "Warning",
+            "inconclusive": false,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "CREATE NONCLUSTERED INDEX IX_CustomerContactPreference_CustomerId ON dbo.CustomerContactPreference (CustomerId, Channel)"
+          }
+        },
+        {
+          "ruleId": "MSSQL-LOCK-003",
+          "ruleIndex": 14,
+          "level": "error",
+          "message": {
+            "text": "ONLINE = ON requires Enterprise edition (or Azure); on Standard this statement fails with error 1712.\n\nFix: Remove ONLINE = ON, or correct the edition assumption (--edition) if the target server is Enterprise."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/002_rebuild_indexes.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "Blocker",
+            "inconclusive": false,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "CREATE NONCLUSTERED INDEX IX_OrderLines_ProductId ON dbo.OrderLines (ProductId, WarehouseId) WITH (ONLINE = ON);"
+          }
+        },
+        {
+          "ruleId": "MSSQL-LOCK-006",
+          "ruleIndex": 17,
+          "level": "warning",
+          "message": {
+            "text": "Offline ALTER INDEX REBUILD takes a schema-modification (Sch-M) lock on dbo.Orders for the duration of the rebuild; all reads and writes are blocked.\n\nFix: ONLINE rebuild is not available on Standard edition; use ALTER INDEX ... REORGANIZE, which is always online."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/002_rebuild_indexes.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 6,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "Warning",
+            "inconclusive": false,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "ALTER INDEX IX_Orders_CustomerId ON dbo.Orders REBUILD;"
+          }
+        },
+        {
+          "ruleId": "MSSQL-LOCK-007",
+          "ruleIndex": 18,
+          "level": "error",
+          "message": {
+            "text": "This transaction takes schema-modification (Sch-M) locks in 2 statements and holds every one of them until COMMIT; the total blocking window is the sum of all of them.\n\nFix: Split the transaction so each Sch-M statement commits on its own."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/001_add_status_column.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "Critical",
+            "inconclusive": false,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "ALTER TABLE dbo.Orders ADD Status tinyint NOT NULL CONSTRAINT DF_Orders_Status DEFAULT (0);"
+          }
+        },
+        {
+          "ruleId": "MSSQL-LOCK-010",
+          "ruleIndex": 21,
+          "level": "warning",
+          "message": {
+            "text": "DDL inside an explicit transaction waits indefinitely for its locks; no SET LOCK_TIMEOUT appears earlier in the script.\n\nFix: Add SET LOCK_TIMEOUT 30000; at the top of the script so a blocked migration fails fast instead of queueing everything behind it."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/005_bad_batching.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 14,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "Warning",
+            "inconclusive": false,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "CREATE TABLE dbo.PaymentType ( Id tinyint NOT NULL CONSTRAINT PK_PaymentType PRIMARY KEY, Name nvarchar(50) NOT NULL );"
+          }
+        },
+        {
+          "ruleId": "MSSQL-REV-001",
+          "ruleIndex": 23,
+          "level": "error",
+          "message": {
+            "text": "DROP TABLE cannot be undone; rename dbo.OrderAudit_Legacy to 'OrderAudit_Legacy_deprecated' and drop it in a later release.\n\nFix: EXEC sp_rename 'dbo.OrderAudit_Legacy', 'OrderAudit_Legacy_deprecated';"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/003_cleanup_legacy.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 6,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "suppressions": [
+            {
+              "kind": "inSource",
+              "justification": "table archived to cold storage 2026-08-01 (OPS-4711)"
+            }
+          ],
+          "properties": {
+            "severity": "Critical",
+            "inconclusive": false,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "DROP TABLE dbo.OrderAudit_Legacy;"
+          }
+        },
+        {
+          "ruleId": "MSSQL-REV-001",
+          "ruleIndex": 23,
+          "level": "error",
+          "message": {
+            "text": "TRUNCATE TABLE removes every row of dbo.StagingImport and the data cannot be restored after commit; keep a copy first.\n\nFix: SELECT * INTO dbo.StagingImport_backup FROM dbo.StagingImport; -- verify, then truncate"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/003_cleanup_legacy.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 15,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "suppressions": [
+            {
+              "kind": "inSource",
+              "justification": "staging table is reloaded from scratch on every import"
+            }
+          ],
+          "properties": {
+            "severity": "Critical",
+            "inconclusive": false,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "TRUNCATE TABLE dbo.StagingImport;"
+          }
+        },
+        {
+          "ruleId": "MSSQL-REV-003",
+          "ruleIndex": 25,
+          "level": "error",
+          "message": {
+            "text": "The renamed column is not updated inside dependent procedures, views or functions (deferred name resolution); they still reference the old name and fail at runtime.\n\nFix: Prefer expand/contract: create the new name, migrate readers, drop the old one in a later release. At minimum check sys.sql_expression_dependencies for references before renaming."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/003_cleanup_legacy.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 9,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "suppressions": [
+            {
+              "kind": "inSource",
+              "justification": "no module references Fax; checked sys.sql_expression_dependencies 2026-08-18"
+            }
+          ],
+          "properties": {
+            "severity": "Critical",
+            "inconclusive": false,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "EXEC sp_rename 'dbo.Customers.Fax', 'Fax_deprecated', 'COLUMN';"
+          }
+        },
+        {
+          "ruleId": "MSSQL-REV-004",
+          "ruleIndex": 26,
+          "level": "warning",
+          "message": {
+            "text": "TRUNCATE TABLE is not inside an explicit transaction, so there is no rollback window; it fails if dbo.StagingImport is referenced by a foreign key, which cannot be verified offline.\n\nFix: If dbo.StagingImport may be FK-referenced or a rollback window is needed, delete in batches instead: WHILE 1 = 1 BEGIN DELETE TOP (4000) FROM dbo.StagingImport WHERE <predicate>; IF @@ROWCOUNT = 0 BREAK; END"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/003_cleanup_legacy.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 15,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "suppressions": [
+            {
+              "kind": "inSource",
+              "justification": "staging table is reloaded from scratch on every import"
+            }
+          ],
+          "properties": {
+            "severity": "Warning",
+            "inconclusive": true,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "TRUNCATE TABLE dbo.StagingImport;"
+          }
+        },
+        {
+          "ruleId": "MSSQL-RW-001",
+          "ruleIndex": 28,
+          "level": "note",
+          "message": {
+            "text": "Adding nullable column StatusChangedAt (no default) to dbo.Orders is metadata-only; existing rows are not touched — safe."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/001_add_status_column.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "Info",
+            "inconclusive": false,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "ALTER TABLE dbo.Orders ADD StatusChangedAt datetime2(3) NULL;"
+          }
+        },
+        {
+          "ruleId": "MSSQL-RW-001",
+          "ruleIndex": 28,
+          "level": "note",
+          "message": {
+            "text": "Adding nullable column PreferredChannel (no default) to dbo.Customers is metadata-only; existing rows are not touched — safe."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/004_idempotent_migration.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 34,
+                  "startColumn": 5
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "Info",
+            "inconclusive": false,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "ALTER TABLE dbo.Customers ADD PreferredChannel tinyint NULL;"
+          }
+        },
+        {
+          "ruleId": "MSSQL-RW-001",
+          "ruleIndex": 28,
+          "level": "note",
+          "message": {
+            "text": "Adding nullable column PaymentTypeId (no default) to dbo.Orders is metadata-only; existing rows are not touched — safe."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/005_bad_batching.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 25,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "Info",
+            "inconclusive": false,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "ALTER TABLE dbo.Orders ADD PaymentTypeId tinyint NULL;"
+          }
+        },
+        {
+          "ruleId": "MSSQL-RW-002",
+          "ruleIndex": 29,
+          "level": "error",
+          "message": {
+            "text": "Adding NOT NULL column Status with a default to dbo.Orders rewrites the entire table on Standard edition.\n\nFix: Run during low traffic, or use expand/contract: add the column as nullable, backfill in batches, then ALTER TABLE dbo.Orders ALTER COLUMN Status ... NOT NULL;"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/001_add_status_column.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "Critical",
+            "inconclusive": false,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "ALTER TABLE dbo.Orders ADD Status tinyint NOT NULL CONSTRAINT DF_Orders_Status DEFAULT (0);"
+          }
+        },
+        {
+          "ruleId": "MSSQL-RW-013",
+          "ruleIndex": 40,
+          "level": "error",
+          "message": {
+            "text": "Creating clustered index IX_LegacyEvents_EventId rewrites every row of dbo.LegacyEvents and rebuilds all of its nonclustered indexes (without DROP_EXISTING the statement only succeeds on a heap)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/002_rebuild_indexes.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "Critical",
+            "inconclusive": false,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "CREATE UNIQUE CLUSTERED INDEX IX_LegacyEvents_EventId ON dbo.LegacyEvents (EventId);"
+          }
+        },
+        {
+          "ruleId": "MSSQL-RW-014",
+          "ruleIndex": 41,
+          "level": "warning",
+          "message": {
+            "text": "Adding FOREIGN KEY constraint FK_CustomerContactPreference_Customer scans every existing row of dbo.CustomerContactPreference under a Sch-M lock (WITH CHECK is the default).\n\nFix: Add it as WITH NOCHECK to skip the scan, then validate later with ALTER TABLE dbo.CustomerContactPreference WITH CHECK CHECK CONSTRAINT FK_CustomerContactPreference_Customer; — until then the constraint is untrusted."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/004_idempotent_migration.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 28,
+                  "startColumn": 5
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "Warning",
+            "inconclusive": false,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "ALTER TABLE dbo.CustomerContactPreference WITH CHECK ADD CONSTRAINT FK_CustomerContactPreference_Customer FOREIGN KEY (C"
+          }
+        },
+        {
+          "ruleId": "MSSQL-RW-016",
+          "ruleIndex": 43,
+          "level": "note",
+          "message": {
+            "text": "Cannot verify the current row width of dbo.Orders offline; adding Status (tinyint) grows each row by 1 byte toward the 8060-byte in-row limit."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/001_add_status_column.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "Info",
+            "inconclusive": true,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "ALTER TABLE dbo.Orders ADD Status tinyint NOT NULL CONSTRAINT DF_Orders_Status DEFAULT (0);"
+          }
+        },
+        {
+          "ruleId": "MSSQL-RW-016",
+          "ruleIndex": 43,
+          "level": "note",
+          "message": {
+            "text": "Cannot verify the current row width of dbo.Orders offline; adding StatusChangedAt (datetime2(3)) grows each row by 7 bytes toward the 8060-byte in-row limit."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/001_add_status_column.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "Info",
+            "inconclusive": true,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "ALTER TABLE dbo.Orders ADD StatusChangedAt datetime2(3) NULL;"
+          }
+        },
+        {
+          "ruleId": "MSSQL-RW-016",
+          "ruleIndex": 43,
+          "level": "note",
+          "message": {
+            "text": "Cannot verify the current row width of dbo.Customers offline; adding PreferredChannel (tinyint) grows each row by 1 byte toward the 8060-byte in-row limit."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/004_idempotent_migration.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 34,
+                  "startColumn": 5
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "Info",
+            "inconclusive": true,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "ALTER TABLE dbo.Customers ADD PreferredChannel tinyint NULL;"
+          }
+        },
+        {
+          "ruleId": "MSSQL-RW-016",
+          "ruleIndex": 43,
+          "level": "note",
+          "message": {
+            "text": "Cannot verify the current row width of dbo.Orders offline; adding PaymentTypeId (tinyint) grows each row by 1 byte toward the 8060-byte in-row limit."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/005_bad_batching.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 25,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "Info",
+            "inconclusive": true,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "ALTER TABLE dbo.Orders ADD PaymentTypeId tinyint NULL;"
+          }
+        },
+        {
+          "ruleId": "MSSQL-TRAN-001",
+          "ruleIndex": 46,
+          "level": "warning",
+          "message": {
+            "text": "This script opens an explicit transaction (line 12) with XACT_ABORT OFF; a run-time error such as a lock timeout or constraint violation then aborts only the failing statement, and the transaction stays open — holding its locks — until the connection closes.\n\nFix: Add SET XACT_ABORT ON; at the top of the script so any error rolls the transaction back and aborts the batch."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/005_bad_batching.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "Warning",
+            "inconclusive": false,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "BEGIN TRANSACTION;"
+          }
+        },
+        {
+          "ruleId": "MSSQL-TRAN-003",
+          "ruleIndex": 48,
+          "level": "warning",
+          "message": {
+            "text": "The transaction opened at line 12 is committed at line 39, 1 GO batch later; if a batch in between fails, the transaction stays open and the remaining batches run inside it.\n\nFix: Keep BEGIN TRAN and its COMMIT in the same batch: remove the GO separators between them, or commit before each GO and open a new transaction after it."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "samples/005_bad_batching.sql",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "Warning",
+            "inconclusive": false,
+            "assumption": "SQL Server 2019, Standard edition, offline mode",
+            "statement": "BEGIN TRANSACTION;"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,126 @@
+name: Planizer
+description: >-
+  Validate and explain SQL Server migration scripts before they run: lock level,
+  rewrite vs metadata-only, reversibility, idempotency, batch/GO and transaction
+  hygiene. Deterministic rules, offline, no LLM. Writes a SARIF 2.1.0 report for
+  GitHub code scanning and fails the step according to the fail-on threshold.
+author: Mustafa Basaran
+
+branding:
+  icon: database
+  color: blue
+
+inputs:
+  path:
+    description: >-
+      File or directory to analyze; directories are searched recursively for *.sql.
+      Several paths may be given separated by spaces, or one per line (a multi-line
+      value is split on newlines only, so paths containing spaces work there).
+    required: false
+    default: .
+  target-version:
+    description: >-
+      SQL Server version the scripts will run on (2014, 2016, 2017, 2019, 2022, azure).
+      An empty value defers to .planizer.json, then to the CLI default.
+    required: false
+    default: '2019'
+  edition:
+    description: >-
+      SQL Server edition (enterprise, standard, express, azure, developer).
+      An empty value defers to .planizer.json, then to the CLI default.
+    required: false
+    default: standard
+  fail-on:
+    description: >-
+      Lowest severity that fails the step (info, warning, critical, blocker).
+      An empty value defers to .planizer.json, then to the CLI default.
+    required: false
+    default: critical
+  config:
+    description: >-
+      Path to a .planizer.json config file. Empty discovers the nearest one to the
+      analyzed files, then the workspace root.
+    required: false
+    default: ''
+  rollback:
+    description: >-
+      Set to 'true' to run the opt-in rollback analysis (reverse script, MSSQL-REV-002,
+      rollback status in the summary).
+    required: false
+    default: 'false'
+  sarif-file:
+    description: Where to write the SARIF 2.1.0 report, relative to the workspace.
+    required: false
+    default: planizer.sarif
+  dotnet-version:
+    description: .NET SDK version used to build and run the CLI.
+    required: false
+    default: 8.0.x
+
+outputs:
+  sarif-file:
+    description: Path of the SARIF report that was written (the sarif-file input, as given).
+    value: ${{ steps.analyze.outputs.sarif-file }}
+  exit-code:
+    description: >-
+      Analyzer exit code: 0 = no unsuppressed finding at or above fail-on,
+      1 = at least one such finding, 2 = tool error (missing file, bad argument or config).
+    value: ${{ steps.analyze.outputs.exit-code }}
+
+runs:
+  using: composite
+  steps:
+    - name: Set up .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ inputs.dotnet-version }}
+
+    # The CLI is built from this action's own checkout, so no NuGet publication is needed.
+    - name: Build Planizer CLI
+      shell: bash
+      run: |
+        dotnet build "$GITHUB_ACTION_PATH/src/Planizer.Cli" -c Release --nologo
+
+    - name: Analyze SQL scripts
+      id: analyze
+      shell: bash
+      env:
+        INPUT_PATH: ${{ inputs.path }}
+        INPUT_TARGET_VERSION: ${{ inputs.target-version }}
+        INPUT_EDITION: ${{ inputs.edition }}
+        INPUT_FAIL_ON: ${{ inputs.fail-on }}
+        INPUT_CONFIG: ${{ inputs.config }}
+        INPUT_ROLLBACK: ${{ inputs.rollback }}
+        INPUT_SARIF_FILE: ${{ inputs.sarif-file }}
+      run: |
+        cli="$GITHUB_ACTION_PATH/src/Planizer.Cli/bin/Release/net8.0/Planizer.Cli.dll"
+
+        # Inputs reach the script through env vars (never interpolated into the shell text),
+        # so a path or option value cannot inject commands. A multi-line value is one path per
+        # line (paths with spaces survive); a single line is split on whitespace.
+        if [[ "$INPUT_PATH" == *$'\n'* ]]; then
+          paths=()
+          while IFS= read -r line; do
+            line="${line%$'\r'}"
+            [ -n "$line" ] && paths+=("$line")
+          done <<< "$INPUT_PATH"
+        else
+          read -r -a paths <<< "$INPUT_PATH"
+        fi
+        args=()
+        [ -n "$INPUT_TARGET_VERSION" ] && args+=(--target-version "$INPUT_TARGET_VERSION")
+        [ -n "$INPUT_EDITION" ]        && args+=(--edition "$INPUT_EDITION")
+        [ -n "$INPUT_FAIL_ON" ]        && args+=(--fail-on "$INPUT_FAIL_ON")
+        [ -n "$INPUT_CONFIG" ]         && args+=(--config "$INPUT_CONFIG")
+        [ "$INPUT_ROLLBACK" = "true" ] && args+=(--rollback)
+
+        # Run with -e off so the analyzer's exit code is captured, published as an output,
+        # and then re-raised as the step's (and therefore the action's) exit code.
+        set +e
+        dotnet "$cli" analyze "${paths[@]}" "${args[@]}" --output text --sarif-file "$INPUT_SARIF_FILE"
+        code=$?
+        set -e
+
+        echo "sarif-file=$INPUT_SARIF_FILE" >> "$GITHUB_OUTPUT"
+        echo "exit-code=$code" >> "$GITHUB_OUTPUT"
+        exit "$code"

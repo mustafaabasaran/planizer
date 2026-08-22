@@ -1,0 +1,34 @@
+-- One explicit transaction wrapping 30 statements: every lock is held until the last one commits.
+-- expect: MSSQL-TRAN-006 severity=Info line=3
+BEGIN TRAN;
+INSERT INTO dbo.Lookup (Id, Name) VALUES (1, 'Value 1');
+INSERT INTO dbo.Lookup (Id, Name) VALUES (2, 'Value 2');
+INSERT INTO dbo.Lookup (Id, Name) VALUES (3, 'Value 3');
+INSERT INTO dbo.Lookup (Id, Name) VALUES (4, 'Value 4');
+INSERT INTO dbo.Lookup (Id, Name) VALUES (5, 'Value 5');
+INSERT INTO dbo.Lookup (Id, Name) VALUES (6, 'Value 6');
+INSERT INTO dbo.Lookup (Id, Name) VALUES (7, 'Value 7');
+INSERT INTO dbo.Lookup (Id, Name) VALUES (8, 'Value 8');
+INSERT INTO dbo.Lookup (Id, Name) VALUES (9, 'Value 9');
+INSERT INTO dbo.Lookup (Id, Name) VALUES (10, 'Value 10');
+INSERT INTO dbo.Lookup (Id, Name) VALUES (11, 'Value 11');
+INSERT INTO dbo.Lookup (Id, Name) VALUES (12, 'Value 12');
+INSERT INTO dbo.Lookup (Id, Name) VALUES (13, 'Value 13');
+INSERT INTO dbo.Lookup (Id, Name) VALUES (14, 'Value 14');
+INSERT INTO dbo.Lookup (Id, Name) VALUES (15, 'Value 15');
+INSERT INTO dbo.Lookup (Id, Name) VALUES (16, 'Value 16');
+INSERT INTO dbo.Lookup (Id, Name) VALUES (17, 'Value 17');
+INSERT INTO dbo.Lookup (Id, Name) VALUES (18, 'Value 18');
+INSERT INTO dbo.Lookup (Id, Name) VALUES (19, 'Value 19');
+INSERT INTO dbo.Lookup (Id, Name) VALUES (20, 'Value 20');
+INSERT INTO dbo.Lookup (Id, Name) VALUES (21, 'Value 21');
+INSERT INTO dbo.Lookup (Id, Name) VALUES (22, 'Value 22');
+INSERT INTO dbo.Lookup (Id, Name) VALUES (23, 'Value 23');
+INSERT INTO dbo.Lookup (Id, Name) VALUES (24, 'Value 24');
+INSERT INTO dbo.Lookup (Id, Name) VALUES (25, 'Value 25');
+INSERT INTO dbo.Lookup (Id, Name) VALUES (26, 'Value 26');
+INSERT INTO dbo.Lookup (Id, Name) VALUES (27, 'Value 27');
+INSERT INTO dbo.Lookup (Id, Name) VALUES (28, 'Value 28');
+INSERT INTO dbo.Lookup (Id, Name) VALUES (29, 'Value 29');
+INSERT INTO dbo.Lookup (Id, Name) VALUES (30, 'Value 30');
+COMMIT;

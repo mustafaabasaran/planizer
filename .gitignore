@@ -1,0 +1,12 @@
+bin/
+obj/
+*.user
+.vs/
+.idea/
+artifacts/
+*.nupkg
+nupkg/
+
+# local-only working files (implementation plans, decision-capture log)
+docs/superpowers/
+docs/adr/decision-log.jsonl

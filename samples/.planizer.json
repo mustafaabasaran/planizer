@@ -1,0 +1,11 @@
+{
+  // Cleanup migrations (003) run inside an announced maintenance window:
+  // plain schema-lock findings are informational there. The build still
+  // fails on anything Critical or above.
+  "targetVersion": "2019",
+  "edition": "standard",
+  "failOn": "critical",
+  "rules": {
+    "MSSQL-LOCK-001": { "severity": "Info" }
+  }
+}
