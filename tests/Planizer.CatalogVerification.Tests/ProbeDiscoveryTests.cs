@@ -9,28 +9,46 @@ public sealed class ProbeDiscoveryTests
     [Fact]
     public void Discovery_is_type_name_ordered_and_includes_the_registered_probes()
     {
-        // Probe files are contributed by parallel tasks, so this asserts the discovery
-        // contract (deterministic type-name order) and the T1 exemplars rather than an exact
-        // registry of every probe.
+        // All three probe families (columns, indexes, objects) are merged, so discovery must
+        // yield exactly the full registry, in deterministic type-name order.
         var probes = ProbeRunner.DiscoverProbes();
         var typeNames = probes.Select(p => p.GetType().FullName!).ToList();
         Assert.Equal(typeNames.OrderBy(n => n, StringComparer.Ordinal), typeNames);
 
         var keys = probes.Select(p => p.OperationKey).ToHashSet(StringComparer.Ordinal);
-        Assert.Superset(
+        Assert.Equal(
             new HashSet<string>(StringComparer.Ordinal)
             {
+                DdlOperationKeys.AddCheckOrFk,
                 DdlOperationKeys.AddColumnNotNullDefaultConst,
+                DdlOperationKeys.AddColumnNotNullDefaultNondet,
+                DdlOperationKeys.AddColumnNotNullNoDefault,
                 DdlOperationKeys.AddColumnNullable,
+                DdlOperationKeys.AddComputedPersisted,
+                DdlOperationKeys.AddDefaultConstraint,
                 DdlOperationKeys.AddPkOrUnique,
+                DdlOperationKeys.AlterColumnCollation,
+                DdlOperationKeys.AlterColumnFixedLenChange,
+                DdlOperationKeys.AlterColumnNarrow,
+                DdlOperationKeys.AlterColumnNotNullToNull,
+                DdlOperationKeys.AlterColumnNullToNotNull,
+                DdlOperationKeys.AlterColumnWidenToMax,
+                DdlOperationKeys.AlterColumnWidenVarLen,
                 DdlOperationKeys.AlterIndexRebuildOffline,
                 DdlOperationKeys.AlterIndexRebuildOnline,
                 DdlOperationKeys.AlterIndexReorganize,
+                DdlOperationKeys.AlterTableSwitch,
                 DdlOperationKeys.CreateClusteredIndexOnHeap,
                 DdlOperationKeys.CreateClusteredIndexOnline,
                 DdlOperationKeys.CreateNonclusteredIndexOffline,
                 DdlOperationKeys.CreateNonclusteredIndexOnline,
+                DdlOperationKeys.DataCompressionChange,
                 DdlOperationKeys.DropClusteredIndex,
+                DdlOperationKeys.DropColumn,
+                DdlOperationKeys.DropTable,
+                DdlOperationKeys.EnableDisableTrigger,
+                DdlOperationKeys.SpRename,
+                DdlOperationKeys.TruncateTable,
             },
             keys);
     }
