@@ -9,8 +9,16 @@ public enum LockLevel
     /// <summary>Brief schema-modification lock, e.g. metadata-only changes (CSV: <c>schm_brief</c>).</summary>
     SchMBrief,
 
-    /// <summary>Shared table lock — reads allowed, writes blocked (CSV: <c>s_table</c>).</summary>
+    /// <summary>Shared table lock held for the duration — reads allowed, writes blocked (CSV: <c>s_table</c>).</summary>
     STable,
+
+    /// <summary>
+    /// Brief shared (S) table lock, taken only for the short preparation and final phases of an
+    /// online index operation rather than for the whole build (CSV: <c>s_brief</c>). Distinct from
+    /// <see cref="STable"/> (held throughout) and from <see cref="SchMBrief"/>: an S lock blocks
+    /// writers but not readers, and it never blocks all access the way a Sch-M lock does.
+    /// </summary>
+    SBrief,
 
     /// <summary>No schema-level lock of note (CSV: <c>none</c>).</summary>
     None,

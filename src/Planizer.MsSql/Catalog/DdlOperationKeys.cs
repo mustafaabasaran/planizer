@@ -23,7 +23,8 @@ public static class DdlOperationKeys
     public const string CreateClusteredIndexOnHeap = "create_clustered_index_on_heap";
     public const string DropClusteredIndex = "drop_clustered_index";
     public const string CreateNonclusteredIndexOffline = "create_nonclustered_index_offline";
-    public const string CreateIndexOnline = "create_index_online";
+    public const string CreateClusteredIndexOnline = "create_clustered_index_online";
+    public const string CreateNonclusteredIndexOnline = "create_nonclustered_index_online";
     public const string AlterIndexRebuildOffline = "alter_index_rebuild_offline";
     public const string AlterIndexRebuildOnline = "alter_index_rebuild_online";
     public const string AlterIndexReorganize = "alter_index_reorganize";
@@ -56,7 +57,8 @@ public static class DdlOperationKeys
         CreateClusteredIndexOnHeap,
         DropClusteredIndex,
         CreateNonclusteredIndexOffline,
-        CreateIndexOnline,
+        CreateClusteredIndexOnline,
+        CreateNonclusteredIndexOnline,
         AlterIndexRebuildOffline,
         AlterIndexRebuildOnline,
         AlterIndexReorganize,

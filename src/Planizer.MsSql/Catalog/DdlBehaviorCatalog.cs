@@ -93,6 +93,7 @@ public sealed class DdlBehaviorCatalog
                 "schm" => LockLevel.SchM,
                 "schm_brief" => LockLevel.SchMBrief,
                 "s_table" => LockLevel.STable,
+                "s_brief" => LockLevel.SBrief,
                 "none" => LockLevel.None,
                 _ => throw new InvalidDataException($"Unknown lock '{fields[3]}' in row '{line}'."),
             },

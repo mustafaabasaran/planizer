@@ -43,3 +43,25 @@ The suggested fix depends on the edition assumption:
 
 The finding itself fires on every edition; only the fix text changes. Online index build is an
 Enterprise (and Azure) feature.
+
+## Sources
+
+If you arrive here from the `CREATE INDEX` reference page you may find its `ONLINE = OFF`
+wording confusing, so the claim is worth defending explicitly: **an offline nonclustered build
+takes a table-level shared (S) lock for the duration — reads are allowed, writes are blocked.**
+
+- *ALTER TABLE index_option* (`ONLINE = OFF`) states it verbatim: table locks are applied for the
+  duration of the index operation, and creating a nonclustered index acquires a shared (S) lock
+  on the table — which prevents updates to the underlying table but allows read operations such
+  as `SELECT`.
+- The **lock compatibility matrix** settles it independently: a table-level S lock is
+  incompatible with the intent-exclusive (IX) lock a writer must take on the table, so no
+  `INSERT`/`UPDATE`/`DELETE` can proceed while it is held; it *is* compatible with the IS lock a
+  reader takes.
+- The `CREATE INDEX` / `ALTER INDEX` pages were reworded in a **February 2025 docs refresh** into
+  a sentence that contradicts both its own surrounding paragraph and the sibling `ALTER TABLE`
+  page. Planizer follows the `ALTER TABLE` page and the compatibility matrix. Settling this
+  empirically against a real instance (does an `INSERT` succeed during an offline nonclustered
+  `CREATE INDEX`?) is a tracked item in `docs/ROADMAP.md`.
+
+A **clustered** build is not in dispute: it takes Sch-M and blocks all access.
