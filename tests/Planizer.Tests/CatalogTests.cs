@@ -65,7 +65,8 @@ public class CatalogTests
     [InlineData(SqlEdition.Enterprise)]
     public void Azure_maps_to_enterprise_rows(SqlEdition edition)
     {
-        var behavior = Catalog.Lookup(DdlOperationKeys.CreateIndexOnline, SqlServerVersion.AzureSql, edition);
+        var behavior = Catalog.Lookup(
+            DdlOperationKeys.CreateClusteredIndexOnline, SqlServerVersion.AzureSql, edition);
 
         Assert.NotNull(behavior);
         Assert.Equal(LockLevel.SchMBrief, behavior.Lock);
@@ -84,7 +85,10 @@ public class CatalogTests
     [Fact]
     public void Enterprise_only_rows_have_no_standard_fallback()
     {
-        Assert.Null(Catalog.Lookup(DdlOperationKeys.CreateIndexOnline, SqlServerVersion.Sql2019, SqlEdition.Standard));
+        Assert.Null(Catalog.Lookup(
+            DdlOperationKeys.CreateClusteredIndexOnline, SqlServerVersion.Sql2019, SqlEdition.Standard));
+        Assert.Null(Catalog.Lookup(
+            DdlOperationKeys.CreateNonclusteredIndexOnline, SqlServerVersion.Sql2019, SqlEdition.Standard));
         Assert.Null(Catalog.Lookup(DdlOperationKeys.AlterIndexRebuildOnline, SqlServerVersion.Sql2022, SqlEdition.Express));
     }
 
@@ -132,7 +136,9 @@ public class CatalogTests
 
                 var standard = Catalog.Lookup(key, version, SqlEdition.Standard);
                 var isKnownGap =
-                    key is DdlOperationKeys.CreateIndexOnline or DdlOperationKeys.AlterIndexRebuildOnline
+                    key is DdlOperationKeys.CreateClusteredIndexOnline
+                        or DdlOperationKeys.CreateNonclusteredIndexOnline
+                        or DdlOperationKeys.AlterIndexRebuildOnline
                     || (key is DdlOperationKeys.DataCompressionChange && version <= SqlServerVersion.Sql2016);
                 Assert.True(isKnownGap == (standard is null),
                     $"Unexpected lookup result for {key} / {version} / Standard.");

@@ -18,9 +18,10 @@ data_compression_change,standard_express,2016sp1,schm,rewrite,yes,row/page compr
 create_clustered_index_on_heap,any,any,schm,rewrite,yes,all nonclustered indexes rebuilt
 drop_clustered_index,any,any,schm,rewrite,yes,table becomes heap; NC indexes rebuilt
 create_nonclustered_index_offline,any,any,s_table,index_build,yes,writes blocked during build
-create_index_online,enterprise,any,schm_brief,index_build,yes,brief Sch-M at start/end
+create_clustered_index_online,enterprise,any,schm_brief,index_build,yes,brief Sch-M in the final phase; S at the start
+create_nonclustered_index_online,enterprise,any,s_brief,index_build,yes,brief S at start and end; no blocking table Sch-M
 alter_index_rebuild_offline,any,any,schm,index_build,yes,
-alter_index_rebuild_online,enterprise,any,schm_brief,index_build,yes,resumable 2017+
+alter_index_rebuild_online,enterprise,any,schm_brief,index_build,yes,Sch-M is a final-phase lock; the start-of-operation lock is S
 alter_index_reorganize,any,any,none,index_build,yes,always online
 add_check_or_fk,any,any,schm,full_scan,yes,WITH NOCHECK skips scan but constraint untrusted
 add_pk_or_unique,any,any,schm,index_build,yes,uniqueness validation scan

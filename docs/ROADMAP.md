@@ -126,6 +126,17 @@ RULES.md sections 7–8. The snapshot and live modes are enabled.
 - [ ] Severity escalation based on table activity level
 - [ ] Usage-statistics check before DROP INDEX
 - [ ] Integration tests with Testcontainers
+- [ ] Container-based verification of the DDL behavior catalog (Developer = Enterprise, and Express),
+      run in CI on native amd64. Two rows must be settled **empirically**, because Microsoft's own
+      pages disagree with each other:
+      (a) does an `INSERT` succeed while an **offline nonclustered** `CREATE INDEX` is running?
+      (the `ALTER TABLE` index_option page and the lock compatibility matrix say no — writes are
+      blocked by the table-level S lock — while the February 2025 rewrite of the `CREATE INDEX`
+      page reads as if they were not; MSSQL-LOCK-002 currently follows the former);
+      (b) which lock does the **final phase of an online nonclustered `CREATE INDEX`** take?
+      ("How online index operations work" says a short shared (S) lock, and Sch-M only for a
+      clustered create/drop or any rebuild; MSSQL-LOCK-004 and the
+      `create_nonclustered_index_online` catalog row currently follow that)
 
 **Exit criterion:** you can say "this migration will take an estimated X seconds and Y MB of log in prod".
 
@@ -173,7 +184,7 @@ PerformanceStudio's territory. Adapter first, native later.
 
 ## Open questions
 
-- Validating the edition-dependent behaviors in the rule table: a real test of every row in Docker against Enterprise (Developer) and Express
+- Validating the edition-dependent behaviors in the rule table: a real test of every row in Docker against Enterprise (Developer) and Express — including the two rows where the documentation contradicts itself (offline nonclustered build: are writes blocked? online nonclustered create: S or Sch-M in the final phase?), see Phase 2
 - Can PerformanceStudio's Core be referenced as a NuGet package, or is it integrated through the CLI?
 - Duration estimate calibration: a fixed MB/s, or learned from the user's own measurements?
 - Is the Squawk adapter permanent for Postgres, or a full move to libpg_query?

@@ -62,7 +62,12 @@ public class DdlOperationClassifierTests
     [InlineData("ALTER TABLE dbo.T DISABLE TRIGGER ALL;", DdlOperationKeys.EnableDisableTrigger)]
     [InlineData("CREATE INDEX IX_T ON dbo.T (C);", DdlOperationKeys.CreateNonclusteredIndexOffline)]
     [InlineData("CREATE CLUSTERED INDEX CX ON dbo.T (Id);", DdlOperationKeys.CreateClusteredIndexOnHeap)]
-    [InlineData("CREATE INDEX IX_T ON dbo.T (C) WITH (ONLINE = ON);", DdlOperationKeys.CreateIndexOnline)]
+    [InlineData(
+        "CREATE INDEX IX_T ON dbo.T (C) WITH (ONLINE = ON);",
+        DdlOperationKeys.CreateNonclusteredIndexOnline)]
+    [InlineData(
+        "CREATE CLUSTERED INDEX CX ON dbo.T (Id) WITH (ONLINE = ON);",
+        DdlOperationKeys.CreateClusteredIndexOnline)]
     [InlineData("ALTER INDEX IX_T ON dbo.T REBUILD;", DdlOperationKeys.AlterIndexRebuildOffline)]
     [InlineData("ALTER INDEX IX_T ON dbo.T REBUILD WITH (ONLINE = ON);", DdlOperationKeys.AlterIndexRebuildOnline)]
     [InlineData(

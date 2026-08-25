@@ -59,7 +59,8 @@ public static class DdlOperationClassifier
     /// only) is judged by its offline-equivalent row, so the summary count does not silently
     /// shift with the edition. Statements the catalog still cannot resolve fall back to a
     /// conservative AST answer: every remaining ALTER TABLE variant and DROP INDEX take Sch-M;
-    /// everything else does not.
+    /// everything else does not. An online nonclustered create never counts: its brief shared (S)
+    /// locks block writers, not all access.
     /// </summary>
     public static bool AcquiresSchMLock(SqlStatementInfo statement, DdlBehaviorCatalog catalog, PlanizerConfig config)
     {
@@ -229,11 +230,19 @@ public static class DdlOperationClassifier
         return DdlOperationKeys.DropColumn;
     }
 
+    /// <summary>
+    /// Clustered and nonclustered creates get separate keys in both the online and the offline
+    /// path: an online <c>CLUSTERED</c> create ends with a schema-modification (Sch-M) lock on
+    /// the table, while an online nonclustered create only ever takes a brief shared (S)
+    /// lock to start and to complete — no blocking table Sch-M in any phase.
+    /// </summary>
     private static string ClassifyCreateIndex(CreateIndexStatement create)
     {
         if (IsOnline(create.IndexOptions))
         {
-            return DdlOperationKeys.CreateIndexOnline;
+            return create.Clustered == true
+                ? DdlOperationKeys.CreateClusteredIndexOnline
+                : DdlOperationKeys.CreateNonclusteredIndexOnline;
         }
 
         return create.Clustered == true
