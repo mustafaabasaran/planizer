@@ -16,11 +16,11 @@
     <ToolCommandName>planizer</ToolCommandName>
     <PackageId>Planizer</PackageId>
     <PackageOutputPath>nupkg</PackageOutputPath>
-    <Description>Validates and explains SQL Server DDL/migration scripts before they run: lock level (Sch-M), rewrite vs metadata-only, reversibility. Deterministic rules, offline analysis, no LLM.</Description>
+    <Description>SQL Server / T-SQL migration linter. Validates and explains DDL/migration scripts before they run: lock level (Sch-M), rewrite vs metadata-only, reversibility. Deterministic rules, offline analysis, no LLM.</Description>
     <Authors>Mustafa Basaran</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageTags>sql-server;tsql;migration;ddl;linter;analyzer;dba;ci</PackageTags>
+    <PackageTags>sql-server;mssql;tsql;t-sql;sql;migration;migrations;ddl;linter;lint;analyzer;static-analysis;sarif;dba;ci;azure-sql</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>

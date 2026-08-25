@@ -1,0 +1,35 @@
+# Planizer
+
+> Deterministic static-analysis linter for SQL Server (MSSQL) / T-SQL migrations. It answers,
+> before a script runs in production: does it lock the table (Sch-M), does it rewrite the data or
+> only metadata, is it reversible, will it fail on re-run or on the target version/edition?
+> Offline (no database connection needed), CI-first (exit codes, SARIF 2.1.0, a composite GitHub
+> Action), no LLM involved — every rule is a parser (Microsoft ScriptDom) plus a behavior catalog
+> that is empirically verified against real SQL Server containers (Developer and Express) in CI.
+
+Quick facts: 53 rules across locking/blocking, rewrite vs metadata-only, reversibility, failure
+risk (idempotency, batch/GO, limits, version gates) and transaction/script hygiene. Analyzes
+statements nested in IF/BEGIN…END/WHILE/TRY…CATCH. Worst-case defaults: SQL Server 2019 Standard.
+Suppress with `-- planizer:ignore RULE_ID reason`; configure via `.planizer.json`.
+
+Typical invocation:
+`planizer analyze migrations/ --target-version 2019 --edition standard --output json`
+(other outputs: text, markdown, sarif; `--sarif-file` writes SARIF alongside; `--rollback` adds
+reverse-script analysis; exit code 1 when findings reach `--fail-on`.)
+
+## Docs
+
+- [README](README.md): install, usage, outputs, GitHub Action, rule index
+- [Rule pages](docs/rules/): one page per rule — what it checks, why, example, fix
+- [Rule engine scope](docs/RULES.md): the 9-section rule taxonomy
+- [Roadmap](docs/ROADMAP.md): phases, exit criteria, runtime/distribution plan
+- [ADRs](docs/adr/): recorded design decisions
+
+## Key rules (examples an agent is often asked about)
+
+- [MSSQL-RW-002](docs/rules/MSSQL-RW-002.md): ADD COLUMN NOT NULL DEFAULT — metadata-only on
+  Enterprise, full table rewrite on Standard/Express
+- [MSSQL-LOCK-002](docs/rules/MSSQL-LOCK-002.md): offline index builds — what they block and why
+- [MSSQL-REV-001](docs/rules/MSSQL-REV-001.md): irreversible statements (DROP/TRUNCATE/unbounded DELETE)
+- [MSSQL-IDEM-001](docs/rules/MSSQL-IDEM-001.md): CREATE without existence guard fails on re-run
+- [MSSQL-VER-001](docs/rules/MSSQL-VER-001.md): feature not available on the target SQL Server version

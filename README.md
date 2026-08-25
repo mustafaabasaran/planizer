@@ -2,7 +2,12 @@
 
 **Validate and explain SQL changes before they run.**
 
-Planizer analyzes SQL migration scripts — DDL, DML, whole migration folders — and answers the
+[![CI](https://github.com/mustafaabasaran/planizer/actions/workflows/ci.yml/badge.svg)](https://github.com/mustafaabasaran/planizer/actions/workflows/ci.yml)
+[![Catalog verification](https://github.com/mustafaabasaran/planizer/actions/workflows/catalog-verification.yml/badge.svg)](https://github.com/mustafaabasaran/planizer/actions/workflows/catalog-verification.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+Planizer is a deterministic static-analysis linter for **SQL Server (MSSQL) / T-SQL migrations**.
+It analyzes SQL migration scripts — DDL, DML, whole migration folders — and answers the
 questions every review asks before approving a change for production: *Does it lock the table?
 For how long? Does it rewrite data or just metadata? Can it be rolled back? Will it even run on
 our edition?*
@@ -21,7 +26,8 @@ production table, rewrites terabytes, or destroys data irrecoverably. Postgres h
 [Squawk](https://github.com/sbdchd/squawk) as a de-facto standard for this. **SQL Server has
 nothing equivalent**: existing T-SQL linters stop at style and anti-patterns, and plan
 analyzers only look at queries. DDL/migration safety on MSSQL — lock levels, rewrite vs
-metadata-only, reversibility, edition traps — is the gap Planizer fills.
+metadata-only, reversibility, edition traps — is the gap Planizer fills: **what Squawk is for
+Postgres, Planizer aims to be for SQL Server.**
 
 Design decisions:
 
@@ -427,6 +433,29 @@ already reports it.
 | [MSSQL-ENV-001](docs/rules/MSSQL-ENV-001.md) | Info | USE [database] overrides the migration runner's target database |
 | [MSSQL-ENV-002](docs/rules/MSSQL-ENV-002.md) | Warning / Info (per file) | Linked-server or cross-database reference ties the script to one environment |
 | [MSSQL-ENV-003](docs/rules/MSSQL-ENV-003.md) | Info (per file) | Long-running DDL with no progress messages |
+
+## How it compares
+
+| Tool | Focus | Where Planizer differs |
+|---|---|---|
+| [Squawk](https://github.com/sbdchd/squawk) | Postgres migration linting | Postgres only; Planizer covers SQL Server first (Postgres is on the [roadmap](docs/ROADMAP.md) via a Squawk adapter) |
+| [tsqllint](https://github.com/tsqllint/tsqllint) | T-SQL style and anti-patterns | No lock/rewrite/reversibility model; Planizer reasons about what the DDL does to a production table |
+| [ErikEJ's SQL Server analyzers](https://github.com/ErikEJ/SqlServer.Rules) (140+ rules) | T-SQL code quality | Same: code-level rules, not migration safety (Sch-M windows, rewrite vs metadata-only, edition traps) |
+| PerformanceStudio | Execution-plan analysis | Query plans, not DDL; a plan-analysis adapter is planned for a later phase |
+| [Atlas](https://atlasgo.io) | Schema-as-code and migration linting | Commercial, pulls you into its own migration format; Planizer analyzes plain `.sql`, no lock-in |
+| [strong_migrations](https://github.com/ankane/strong_migrations) | Rails/Postgres migration safety | Ruby/Postgres ecosystem; Planizer is CI-first and dialect-adaptered |
+
+Uniquely, Planizer's claims are **empirically verified**: a [CI job](.github/workflows/catalog-verification.yml)
+runs every behavior-catalog row against real SQL Server containers (Developer *and* Express) and
+fails on any contradiction between the docs and the engine.
+
+## Using with AI agents
+
+The `json` output is stable and machine-readable (findings + per-rule timing + summary), the exit
+code is threshold-driven, and every rule has a documentation page an agent can quote
+(`docs/rules/<RULE-ID>.md`). A machine-readable project summary lives in [`llms.txt`](llms.txt).
+An MCP server (`analyze_migration`, `explain_finding`, `get_lock_profile`) is planned — see the
+[roadmap](docs/ROADMAP.md).
 
 ## Roadmap
 
