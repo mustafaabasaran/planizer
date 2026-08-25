@@ -54,7 +54,7 @@ Design decisions:
   `sarif` for GitHub code scanning and IDE problem panes; exit codes for CI.
 - **Suppressions and config** — `-- planizer:ignore RULE reason` on a statement,
   `.planizer.json` per directory for version, edition and per-rule overrides.
-- **A composite GitHub Action** — `uses: <owner>/planizer@<ref>` builds the CLI from source,
+- **A composite GitHub Action** — `uses: mustafaabasaran/planizer@v0.1.0` builds the CLI from source,
   fails the job on findings above a threshold and writes SARIF for `upload-sarif`.
 
 ## Install
@@ -291,7 +291,7 @@ jobs:
 
       - name: Planizer
         id: planizer
-        uses: <owner>/planizer@main        # pin a tag or commit SHA in real pipelines
+        uses: mustafaabasaran/planizer@v0.1.0   # pin a tag or commit SHA in real pipelines
         with:
           path: migrations
           target-version: '2019'
