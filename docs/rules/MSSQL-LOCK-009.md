@@ -1,11 +1,12 @@
 # MSSQL-LOCK-009 — Unbounded UPDATE/DELETE escalates to a table lock
 
-**Default severity:** Warning · **Category:** Locking
+**Default severity:** Warning (Info when a join's effect is undecidable) · **Category:** Locking
 
 ## What it checks
 
 `UPDATE` or `DELETE` statements with **no WHERE clause and no TOP** — they touch every row of
-the table.
+the table. A `JOIN` in the FROM clause is examined rather than assumed to be a filter: see
+*What counts as a filter* below.
 
 ## Why it matters
 
@@ -29,12 +30,45 @@ after ~5000 row locks lock escalation turns it into a table lock.`
 Bounded statements are fine: `DELETE FROM dbo.Big WHERE Id < 100;` or
 `DELETE TOP (4000) FROM dbo.Big;` do not trigger the rule.
 
+## What counts as a filter
 
-Table variables (`@t`) and temp tables (`#t`) are ignored — they are session-scoped and escalate no
-locks on user tables — and a DELETE/UPDATE whose FROM clause joins other tables counts as bounded
-by the join even without a WHERE. An aliased target (`UPDATE T SET … FROM dbo.Big T`) is resolved
-through the FROM clause: the finding names `dbo.Big`, and `DELETE T FROM #tmp T` counts as a temp
-table write.
+A `JOIN` in the FROM clause bounds the write only when it can actually **drop rows of the
+target**. The rule classifies each statement into one of three states, based on where the target
+sits in the join tree:
+
+| Shape | State | Reported |
+|---|---|---|
+| Target on the **null-supplying** side of a `LEFT`/`RIGHT` outer join | bounded | nothing |
+| Target on the **preserved** side of a `LEFT`/`RIGHT` outer join, or either side of `FULL OUTER JOIN` | unbounded | Warning |
+| `CROSS JOIN`, or the comma cross join (`FROM dbo.A a, dbo.B b`) | unbounded | Warning |
+| `OUTER APPLY` with the target on the left | unbounded | Warning |
+| Target not in the FROM clause at all (`UPDATE dbo.A … FROM dbo.B JOIN dbo.C`) — T-SQL cross joins it in | unbounded | Warning |
+| `INNER JOIN`, `CROSS APPLY` | **inconclusive** | Info, `inconclusive: true` |
+
+`DELETE t FROM dbo.Orders t LEFT JOIN dbo.Customers c ON c.Id = t.CustomerId;` deletes **every**
+row of `dbo.Orders` — the outer join preserves the left side in full — and reports
+`Warning MSSQL-LOCK-009 DELETE on dbo.Orders has no WHERE and no TOP, and the LEFT JOIN does not
+restrict dbo.Orders: …`.
+
+An `INNER JOIN` is the undecidable case: it drops target rows without a match, but the ON
+predicate may match every row. Offline there is no way to tell, and per the project's rule that a
+rule never stays silent it reports Info instead:
+`Info MSSQL-LOCK-009 DELETE on dbo.ParameterGroupTranslation has no WHERE and no TOP; how many
+rows it touches depends on the cardinality of the INNER JOIN, which may match every row — then
+~5000 row locks escalate into a table lock. A schema snapshot settles this. [inconclusive]`.
+A schema/statistics snapshot (Phase 2) turns this into a decided verdict. `CROSS APPLY` is the
+same case: it drops the left row only if its subquery can come back empty.
+[MSSQL-REV-001](MSSQL-REV-001.md) deliberately does *not* mirror the inconclusive state — a
+Critical data-loss finding on a guess would be wrong.
+
+When the join path holds several joins, the **strongest** restriction on the way from the FROM
+clause down to the target wins: one filtering join is enough to keep the write off the rest of
+the table.
+
+Table variables (`@t`) and temp tables (`#t`) are ignored throughout — they are session-scoped and
+escalate no locks on user tables. An aliased target (`UPDATE T SET … FROM dbo.Big T`) is resolved
+through the FROM clause: the finding names `dbo.Big`, while `DELETE T FROM #tmp T` and
+`DELETE i FROM @Ids i CROSS JOIN …` count as transient writes.
 
 ## How to fix
 

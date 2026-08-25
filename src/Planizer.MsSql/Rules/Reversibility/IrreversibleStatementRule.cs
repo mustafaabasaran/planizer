@@ -10,8 +10,11 @@ namespace Planizer.MsSql.Rules.Reversibility;
 /// <summary>
 /// MSSQL-REV-001: statements that destroy data no rollback script can bring back. DDL cases
 /// (DROP TABLE, DROP COLUMN, TRUNCATE) are resolved through the behavior catalog
-/// (<c>reversible=no</c>); a DELETE without a WHERE clause is flagged directly — it is DML and
-/// has no catalog row. ALTER COLUMN narrowing is also irreversible but cannot be proven from the
+/// (<c>reversible=no</c>); a DELETE that nothing bounds is flagged directly — it is DML and
+/// has no catalog row. "Nothing bounds it" includes a FROM clause whose join cannot drop target
+/// rows (see <see cref="DmlTargets.ClassifyPersistentWrite"/>); where the join's effect depends on
+/// the data the rule stays silent, since Critical on a guess would be wrong.
+/// ALTER COLUMN narrowing is also irreversible but cannot be proven from the
 /// script alone (the current type is unknown offline); the RW family carries that risk instead.
 /// The fix follows the expand/contract pattern: rename first, drop a release later.
 /// </summary>
@@ -34,12 +37,20 @@ public sealed class IrreversibleStatementRule : MsSqlRuleBase
 
             if (statement.Ast is DeleteStatement delete)
             {
-                if (DmlTargets.IsUnboundedPersistentWrite(delete.DeleteSpecification))
+                var bounds = DmlTargets.ClassifyPersistentWrite(delete.DeleteSpecification);
+                if (bounds.Boundedness == JoinBoundedness.Unbounded)
                 {
                     var table = Render(TargetTable(delete));
+
+                    // A join that cannot drop target rows — an outer join with the target on its
+                    // preserved side, a cross join, OUTER APPLY — reads as a filter but is none.
+                    // Name it instead of claiming the DELETE has no WHERE clause.
                     yield return CreateFinding(statement, Severity.Critical,
-                        $"DELETE without a WHERE clause removes every row of {table} and cannot be undone; " +
-                        "keep a copy first and delete in batches.",
+                        bounds.Join is null
+                            ? $"DELETE without a WHERE clause removes every row of {table} and cannot " +
+                              "be undone; keep a copy first and delete in batches."
+                            : $"The {bounds.Join} does not restrict {table}; every row is deleted and " +
+                              "cannot be restored — keep a copy first and delete in batches.",
                         fix: $"SELECT * INTO {table}_backup FROM {table}; -- verify, then delete in batches with a WHERE clause");
                 }
 

@@ -1,10 +1,11 @@
--- Table variables and temp tables are session-scoped: no lock escalation on user tables.
--- A DELETE/UPDATE bounded by a JOIN is not an unfiltered full-table write either.
+-- Table variables and temp tables are session-scoped: no lock escalation on user tables — named
+-- directly or through an alias, joined or not.
 -- expect-none: MSSQL-LOCK-009
+-- expect-none: MSSQL-REV-001
 DECLARE @Ids TABLE (Id bigint NOT NULL);
 DELETE FROM @Ids;
 UPDATE @Ids SET Id = 0;
+DELETE i FROM @Ids i CROSS JOIN dbo.ParameterGroup m;
 CREATE TABLE #Stage (Id int NOT NULL);
 DELETE FROM #Stage;
-DELETE d FROM dbo.ParameterGroupTranslation d INNER JOIN dbo.ParameterGroup m ON m.Id = d.MasterId;
-UPDATE m SET m.WorkgroupId = p.WorkgroupId FROM dbo.Message m JOIN dbo.PosTransaction p ON p.Id = m.PosId;
+DELETE s FROM #Stage s LEFT JOIN dbo.ParameterGroup m ON m.Id = s.Id;

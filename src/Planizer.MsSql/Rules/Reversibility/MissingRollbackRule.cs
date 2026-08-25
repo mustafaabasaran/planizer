@@ -86,7 +86,12 @@ public sealed class MissingRollbackRule : MsSqlRuleBase
         _ => "DML",
     };
 
-    /// <summary>Mirrors REV-001's trigger set so the two rules never double-flag a statement.</summary>
+    /// <summary>
+    /// Mirrors REV-001's trigger set so the two rules never double-flag a statement — including
+    /// its join analysis: a DELETE whose FROM clause holds a join that cannot drop target rows is
+    /// REV-001's Critical, while one whose join may or may not bound it (INNER JOIN, CROSS APPLY)
+    /// is left to this rule's per-file DML summary.
+    /// </summary>
     private static bool IsIrreversible(SqlStatementInfo statement, MsSqlAnalysisContext context)
     {
         if (statement.Ast is Microsoft.SqlServer.TransactSql.ScriptDom.DeleteStatement delete)
