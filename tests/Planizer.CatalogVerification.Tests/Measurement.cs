@@ -144,6 +144,74 @@ public static class Measurement
     }
 
     /// <summary>
+    /// Measures the lock profile of a DDL statement WHILE it executes, for rows whose expected
+    /// profile leaves reads (or everything) unblocked. The held-open-transaction technique of
+    /// <see cref="BlockingProfileAsync"/> would retain even the brief metadata locks the DDL
+    /// takes and wrongly report reads as blocked; here the DDL runs on its own autocommitting
+    /// session and the prober samples during execution. Evidence-validity rules: a timeout
+    /// (blocked=true) observed while the DDL is running is always valid; a non-timeout is only
+    /// valid if the DDL was still running when the probe returned. When the execution window is
+    /// missed — the DDL finished too fast — the method returns <c>null</c> and the caller reports
+    /// Inconclusive rather than guessing. The DDL COMMITS (no rollback); the probe's Cleanup
+    /// drops the table anyway.
+    /// </summary>
+    public static async Task<BlockingProfile?> ConcurrentBlockingProfileAsync(
+        Func<Task<SqlConnection>> openConnection,
+        string ddlSql,
+        string readProbeSql,
+        string writeProbeSql,
+        int lockTimeoutMs = DefaultLockTimeoutMs)
+    {
+        await using var runner = await openConnection();
+        var runnerSessionId = await ScalarInt64Async(runner, "SELECT CAST(@@SPID AS bigint);");
+        var act = ExecuteAsync(runner, ddlSql, LongCommandTimeoutSeconds);
+
+        try
+        {
+            await using var prober = await openConnection();
+            await ExecuteAsync(prober, $"SET LOCK_TIMEOUT {lockTimeoutMs};");
+
+            var runningQuery =
+                $"SELECT COUNT_BIG(*) FROM sys.dm_exec_requests WHERE session_id = {runnerSessionId};";
+            var deadline = DateTime.UtcNow.AddSeconds(10);
+            var observedRunning = false;
+            while (!act.IsCompleted && DateTime.UtcNow < deadline)
+            {
+                if (await ScalarInt64Async(prober, runningQuery) > 0)
+                {
+                    observedRunning = true;
+                    break;
+                }
+
+                await Task.Delay(25);
+            }
+
+            if (!observedRunning)
+            {
+                return null; // window missed: the DDL finished before it could be observed
+            }
+
+            var readsBlocked = await TimesOutAsync(prober, readProbeSql);
+            if (!readsBlocked && act.IsCompleted)
+            {
+                return null; // the non-timeout may just mean the DDL already finished
+            }
+
+            var writesBlocked = await TimesOutAsync(prober, writeProbeSql);
+            if (!writesBlocked && act.IsCompleted)
+            {
+                return null;
+            }
+
+            return new BlockingProfile(readsBlocked, writesBlocked);
+        }
+        finally
+        {
+            await act; // propagate DDL failures after the prober is done
+        }
+    }
+
+    /// <summary>
     /// Runs the act statement (inside a rolled-back transaction) and reports the
     /// <see cref="SqlException.Number"/> it raised, or <c>null</c> when it succeeded.
     /// </summary>

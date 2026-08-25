@@ -5,7 +5,8 @@ namespace Planizer.CatalogVerification.Tests;
 /// markdown report (file + GITHUB_STEP_SUMMARY), and fails only when a catalog row is
 /// Contradicted by measurement. Locally this test is always Skipped by <see cref="VerifyFactAttribute"/>.
 /// </summary>
-public sealed class CatalogVerificationTests : IClassFixture<ServerFixture>
+[Collection(ServerCollection.Name)]
+public sealed class CatalogVerificationTests
 {
     private readonly ServerFixture _server;
 

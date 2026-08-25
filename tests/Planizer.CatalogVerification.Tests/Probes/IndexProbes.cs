@@ -38,6 +38,19 @@ public abstract class IndexBlockingProbeBase : CatalogProbeBase
             session.OpenConnectionAsync, ddlSql, ReadProbeSql, WriteProbeSql);
         return new ProbeObservation { Blocking = profile };
     }
+
+    /// <summary>
+    /// For rows whose expected profile leaves reads unblocked (<c>s_table</c>, <c>s_brief</c>,
+    /// <c>none</c>): the held-open technique would retain the DDL's brief metadata locks and
+    /// wrongly block the read probe, so these sample WHILE the DDL runs. A missed window yields
+    /// a null profile, which the evaluator reports as Inconclusive.
+    /// </summary>
+    protected async Task<ProbeObservation> MeasureConcurrentBlockingAsync(ProbeSession session, string ddlSql)
+    {
+        var profile = await Measurement.ConcurrentBlockingProfileAsync(
+            session.OpenConnectionAsync, ddlSql, ReadProbeSql, WriteProbeSql);
+        return new ProbeObservation { Blocking = profile };
+    }
 }
 
 /// <summary>
@@ -72,22 +85,19 @@ public abstract class HeapTableIndexProbeBase : IndexBlockingProbeBase
 /// session's SELECT must succeed and its UPDATE must time out, i.e. the expected blocking
 /// profile is (readsBlocked=false, writesBlocked=true).
 /// </summary>
-public sealed class CreateNonclusteredIndexOfflineProbe : CatalogProbeBase
+public sealed class CreateNonclusteredIndexOfflineProbe : IndexBlockingProbeBase
 {
     public override string OperationKey => DdlOperationKeys.CreateNonclusteredIndexOffline;
 
     public override ProbeExpectation Expectation => new(ProbeAspects.Blocking);
 
-    public override async Task<ProbeObservation> ActAsync(ProbeSession session)
-    {
-        var profile = await Measurement.BlockingProfileAsync(
-            session.OpenConnectionAsync,
-            ddlSql: $"CREATE INDEX [IX_{TableName}_payload] ON {QualifiedTableName} (payload);",
-            readProbeSql: $"SELECT TOP (1) id FROM {QualifiedTableName};",
-            // Self-assignment: side-effect free even though it autocommits when not blocked.
-            writeProbeSql: $"UPDATE TOP (1) {QualifiedTableName} SET payload = payload;");
-        return new ProbeObservation { Blocking = profile };
-    }
+    // A wide window: half a million rows keep the offline build observable from the prober.
+    protected override int RowCount => 500_000;
+
+    public override Task<ProbeObservation> ActAsync(ProbeSession session) =>
+        MeasureConcurrentBlockingAsync(
+            session,
+            $"CREATE INDEX [IX_{TableName}_payload] ON {QualifiedTableName} (payload);");
 }
 
 /// <summary>
@@ -109,8 +119,11 @@ public sealed class CreateNonclusteredIndexOnlineProbe : IndexBlockingProbeBase
 
     public override bool AppliesTo(SqlEdition edition) => edition == SqlEdition.Enterprise;
 
+    // A wide window: half a million rows keep the online build observable from the prober.
+    protected override int RowCount => 500_000;
+
     public override Task<ProbeObservation> ActAsync(ProbeSession session) =>
-        MeasureBlockingAsync(
+        MeasureConcurrentBlockingAsync(
             session,
             $"CREATE INDEX [IX_{TableName}_payload] ON {QualifiedTableName} (payload) WITH (ONLINE = ON);");
 }
@@ -261,8 +274,10 @@ public sealed class AlterIndexReorganizeProbe : IndexBlockingProbeBase
 
     public override ProbeExpectation Expectation => new(ProbeAspects.Blocking);
 
+    // An unfragmented index reorganizes near-instantly; a missed window reports Inconclusive
+    // by design rather than pretending the always-online claim was verified.
     public override Task<ProbeObservation> ActAsync(ProbeSession session) =>
-        MeasureBlockingAsync(session, $"ALTER INDEX [PK_{TableName}] ON {QualifiedTableName} REORGANIZE;");
+        MeasureConcurrentBlockingAsync(session, $"ALTER INDEX [PK_{TableName}] ON {QualifiedTableName} REORGANIZE;");
 }
 
 /// <summary>
@@ -291,7 +306,8 @@ public sealed class AddPkOrUniqueProbe : HeapTableIndexProbeBase
 /// and the very same statement must succeed on Developer/Enterprise, which also backs the
 /// enterprise-scoped rows the probes above measure. Locally the fact always skips.
 /// </summary>
-public sealed class OnlineIndexEditionGateTests : IClassFixture<ServerFixture>
+[Collection(ServerCollection.Name)]
+public sealed class OnlineIndexEditionGateTests
 {
     /// <summary>Unique probe table name, outside the <c>probe_&lt;operation_key&gt;</c> family.</summary>
     public const string TableName = "probe_online_index_edition_gate";
