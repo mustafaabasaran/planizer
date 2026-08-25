@@ -1619,7 +1619,7 @@
           "ruleIndex": 23,
           "level": "error",
           "message": {
-            "text": "TRUNCATE TABLE removes every row of dbo.StagingImport and the data cannot be restored after commit; keep a copy first.\n\nFix: SELECT * INTO dbo.StagingImport_backup FROM dbo.StagingImport; -- verify, then truncate"
+            "text": "TRUNCATE TABLE removes every row of dbo.StagingImport and the data cannot be restored after commit; keep a copy first.\n\nFix: -- Data-only copy: SELECT … INTO transfers no indexes, constraints or triggers, which is what a restore path needs.\n-- Date-stamp the target; a fixed _backup name already exists on a re-run and fails with error 2714.\nSELECT * INTO dbo.StagingImport_backup_<yyyymmdd> FROM dbo.StagingImport;\n-- Verify the copy, then truncate."
           },
           "locations": [
             {
