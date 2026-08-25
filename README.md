@@ -450,6 +450,14 @@ rule × severity count plus a few sample statements per rule — the tool behind
 rounds recorded in `CLAUDE.md` (the header of the script documents the `PLANIZER_*` environment
 knobs).
 
+The claims in the DDL behavior catalog (`src/Planizer.MsSql/Catalog/mssql-ddl-behavior.csv`) are
+verified against a real SQL Server in CI: the
+[catalog verification workflow](.github/workflows/catalog-verification.yml) runs the probe suite
+in `tests/Planizer.CatalogVerification.Tests` against Dockerized Developer and Express instances
+and fails only when a measurement contradicts a catalog row. These tests never run locally —
+without `PLANIZER_CATALOG_VERIFY=1` (set only in that workflow) every probe test skips and no
+container is started.
+
 ## License
 
 MIT.

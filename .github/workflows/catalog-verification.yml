@@ -1,0 +1,62 @@
+# Verifies the claims in src/Planizer.MsSql/Catalog/mssql-ddl-behavior.csv (lock profile,
+# data movement, expected errors, edition differences) against a real SQL Server running in
+# Docker on the CI runner. This workflow is the ONLY place the verification tests run: locally
+# PLANIZER_CATALOG_VERIFY is never set, so every [VerifyFact] test skips and no container is
+# ever started on a development machine.
+#
+# Verdict model: each probe ends Verified, Contradicted, or Inconclusive. Only Contradicted
+# makes `dotnet test` fail (ProbeRunner asserts on it), so only Contradicted fails this job;
+# Inconclusive rows land in the report for follow-up.
+name: Catalog verification
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Weekly: Monday 05:00 UTC.
+    - cron: "0 5 * * 1"
+  pull_request:
+    paths:
+      - "src/Planizer.MsSql/Catalog/**"
+      - "tests/Planizer.CatalogVerification.Tests/**"
+      - ".github/workflows/catalog-verification.yml"
+
+jobs:
+  verify:
+    name: Verify catalog (${{ matrix.pid }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        # Developer reports (and behaves as) Enterprise; Express is the constrained edition.
+        # Together they cover both sides of every edition-split catalog row.
+        pid: [Developer, Express]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      # Testcontainers uses the runner's Docker daemon to start
+      # mcr.microsoft.com/mssql/server:2022-latest with MSSQL_PID=${{ matrix.pid }}.
+      # ProbeRunner writes catalog-verification.md next to the test binaries and appends the
+      # same report to GITHUB_STEP_SUMMARY (inherited by the test host) on its own.
+      - name: Run catalog verification (${{ matrix.pid }})
+        env:
+          PLANIZER_CATALOG_VERIFY: "1"
+          PLANIZER_VERIFY_PID: ${{ matrix.pid }}
+        run: >
+          dotnet test tests/Planizer.CatalogVerification.Tests -c Release
+          --logger "console;verbosity=normal"
+
+      # Upload the report even when the job failed on a Contradicted verdict — that report is
+      # exactly what the fix round needs.
+      - name: Upload verification report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: catalog-verification-${{ matrix.pid }}
+          path: "**/catalog-verification.md"
+          if-no-files-found: warn

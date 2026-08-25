@@ -225,9 +225,9 @@ transaction), VER-001/PARSE-001 grammar ladder (TSql120…TSql180), LIM-001 plan
 **Next:**
 1. **Phase 2 — snapshot → live:** `planizer snapshot`, `ISchemaProvider` / `IStatsProvider`
    implementations, section 7–8 rules, Testcontainers.
-2. **Catalog Docker verification in CI:** amd64 SQL Server containers (under Rosetta) locked up the
-   Apple Silicon development machine; the Developer/Express measurements will be done on GitHub
-   Actions (ubuntu, native amd64), not locally.
+2. **Catalog Docker verification in CI — harness ready, first run pending:** trigger
+   `.github/workflows/catalog-verification.yml` (workflow_dispatch) and review the per-edition
+   verdicts; expect an Inconclusive fix round (measurement code was written without a server).
 3. **NuGet.org release** (dotnet tool v0.1; the package and a local-install smoke test are ready, an
    API key is needed) — afterwards the "build from source" notes in the README/action get simpler.
 
@@ -243,3 +243,15 @@ next perf candidate. Corpus scans can now be profiled with `--timing`.
 given, no reverse script is generated, REV-002 stays silent and the summary has no `Rollback:` line
 (`rollbackComplete: null`). REV-001 (data loss) is always on. Rationale: the team works forward-fix;
 rollback is practically never used.
+
+**Catalog verification harness (2026-08-25):** `tests/Planizer.CatalogVerification.Tests` measures
+every claim in `mssql-ddl-behavior.csv` against a real SQL Server — 30 probes (columns / indexes /
+objects, merged from three parallel branches) built on measurement primitives (log-bytes delta for
+metadata-only vs rewrite, session logical reads for full-scan validation, a two-connection blocking
+profile for lock claims, expected-error assertions). Verdict per row: Verified / Contradicted /
+Inconclusive; only Contradicted fails `dotnet test`. Runs ONLY in
+`.github/workflows/catalog-verification.yml` (workflow_dispatch + weekly cron + PR paths filter on
+the catalog CSV and the test project; Developer/Express matrix on ubuntu-latest, Testcontainers,
+markdown report as artifact + step summary). Locally the `[VerifyFact]` tests always skip —
+`PLANIZER_CATALOG_VERIFY=1` is set only in that workflow, never on a development machine. The first
+real run (and the resulting fix round from its verdicts) has not happened yet.
