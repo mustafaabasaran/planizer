@@ -117,22 +117,22 @@ Critical MSSQL knowledge (the core of section 3):
 
 ## Phases (ROADMAP.md summary)
 
-- **Phase 0 — Skeleton (1 week):** solution, Core interfaces, ScriptDom parse + DDL/DML
+- **Phase 0 — Skeleton:** solution, Core interfaces, ScriptDom parse + DDL/DML
   classification, first rule `MSSQL-LOCK-001` (DDL that takes Sch-M), CLI `planizer analyze <file|dir>
   --dialect mssql --output json|text`, exit codes, xUnit, CI. Exit: a lock report for your own migration.
-- **Phase 1 — MSSQL DDL offline (4–6 weeks):** rule table CSV, config (`--target-version`,
+- **Phase 1 — MSSQL DDL offline:** rule table CSV, config (`--target-version`,
   `--edition`), section 2–3–4 rules, suppression, text/markdown output, script summary, dynamic SQL
   detection, README + rule pages, dotnet tool v0.1.
-- **Phase 1.5 (2 weeks):** sections 5–6, SARIF, GitHub Action.
-- **Phase 2 — Schema/statistics (4–6 weeks):** `planizer snapshot`, provider implementations,
+- **Phase 1.5:** sections 5–6, SARIF, GitHub Action.
+- **Phase 2 — Schema/statistics:** `planizer snapshot`, provider implementations,
   sections 7–8, Testcontainers. Exit: "estimated X s, Y MB of log".
-- **Phase 3 — DML and plan analysis (6–8 weeks):** 3a PerformanceStudio adapter (SHOWPLAN_XML →
+- **Phase 3 — DML and plan analysis:** 3a PerformanceStudio adapter (SHOWPLAN_XML →
   .sqlplan → PS CLI JSON → Planizer report); 3b native plan analysis (PS's 30 rules as the baseline);
   static DML rules (UPDATE/DELETE without WHERE, SELECT *, non-SARGable predicates, leading wildcard,
   NOT IN on nullable, batching suggestion — these need no plan and can be pulled into Phase 1); plan
   comparison; Query Store; **MCP server** (`analyze_migration`, `analyze_plan`, `explain_finding`,
   `get_lock_profile`); GUI optional and last.
-- **Phase 4 — Postgres (4–6 weeks):** Squawk adapter → libpg_query; Postgres lock table;
+- **Phase 4 — Postgres:** Squawk adapter → libpg_query; Postgres lock table;
   EXPLAIN JSON analysis; pg_catalog providers; automatic dialect detection.
 - **Phase 5 — Ecosystem:** EF Core / Flyway / Liquibase / DbUp, VS Code LSP, SSMS/ADS extension,
   Azure SQL differences, custom rule API.

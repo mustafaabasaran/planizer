@@ -47,7 +47,7 @@ docs/
 
 ---
 
-## Phase 0 — Skeleton (1 week)
+## Phase 0 — Skeleton
 
 Goal: an end-to-end working CLI with a single rule.
 
@@ -62,7 +62,7 @@ Goal: an end-to-end working CLI with a single rule.
 
 **Exit criterion:** you can feed in one of your own migration files and get a lock report.
 
-## Phase 1 — MSSQL DDL safety, offline (4–6 weeks)
+## Phase 1 — MSSQL DDL safety, offline
 
 Goal: migration analysis that runs without a server and that nobody else does for MSSQL. RULES.md sections 1–4.
 
@@ -80,7 +80,7 @@ Goal: migration analysis that runs without a server and that nobody else does fo
 
 **Exit criterion:** an acceptable false-positive rate on 10 real migrations; at least one team uses it in CI.
 
-## Phase 1.5 — Script hygiene and failure risk (2 weeks)
+## Phase 1.5 — Script hygiene and failure risk
 
 RULES.md sections 5–6.
 
@@ -114,7 +114,7 @@ RULES.md sections 5–6.
 **Exit criterion:** the new rule families are noise-free on a real migration corpus; SARIF shows up in code
 scanning; the action can be invoked from a repo via `uses:`.
 
-## Phase 2 — Schema and statistics awareness (4–6 weeks)
+## Phase 2 — Schema and statistics awareness
 
 RULES.md sections 7–8. The snapshot and live modes are enabled.
 
@@ -144,7 +144,7 @@ RULES.md sections 7–8. The snapshot and live modes are enabled.
 
 **Exit criterion:** you can say "this migration will take an estimated X seconds and Y MB of log in prod".
 
-## Phase 3 — DML and query plan analysis (6–8 weeks)
+## Phase 3 — DML and query plan analysis
 
 PerformanceStudio's territory. Adapter first, native later.
 
@@ -158,7 +158,7 @@ PerformanceStudio's territory. Adapter first, native later.
 
 **Exit criterion:** the migration + new queries in a PR are evaluated in a single report; an AI agent can call it over MCP.
 
-## Phase 4 — PostgreSQL (4–6 weeks)
+## Phase 4 — PostgreSQL
 
 - [ ] `Planizer.Postgres`: Squawk adapter — convert Squawk's JSON output to the Planizer report model. Quick win.
 - [ ] libpg_query .NET binding (P/Invoke + protobuf) — to write natively the rules Squawk does not cover
