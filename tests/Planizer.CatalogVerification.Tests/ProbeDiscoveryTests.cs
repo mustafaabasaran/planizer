@@ -7,14 +7,22 @@ namespace Planizer.CatalogVerification.Tests;
 public sealed class ProbeDiscoveryTests
 {
     [Fact]
-    public void Exactly_the_exemplar_probes_are_discovered_in_type_name_order()
+    public void Exactly_the_registered_probes_are_discovered_in_type_name_order()
     {
         var keys = ProbeRunner.DiscoverProbes().Select(p => p.OperationKey).ToList();
         Assert.Equal(
             [
                 DdlOperationKeys.AddColumnNotNullDefaultConst,
                 DdlOperationKeys.AddColumnNullable,
+                DdlOperationKeys.AddPkOrUnique,
+                DdlOperationKeys.AlterIndexRebuildOffline,
+                DdlOperationKeys.AlterIndexRebuildOnline,
+                DdlOperationKeys.AlterIndexReorganize,
+                DdlOperationKeys.CreateClusteredIndexOnHeap,
+                DdlOperationKeys.CreateClusteredIndexOnline,
                 DdlOperationKeys.CreateNonclusteredIndexOffline,
+                DdlOperationKeys.CreateNonclusteredIndexOnline,
+                DdlOperationKeys.DropClusteredIndex,
             ],
             keys);
     }
@@ -44,12 +52,15 @@ public sealed class ProbeDiscoveryTests
     }
 
     [Fact]
-    public void Every_exemplar_probe_applies_to_both_ci_editions()
+    public void Every_probe_applies_to_at_least_one_ci_edition()
     {
+        // Probes for enterprise-scoped catalog rows (the online index operations) run only on
+        // the Developer leg of the CI matrix; every probe must still run somewhere.
         foreach (var probe in ProbeRunner.DiscoverProbes())
         {
-            Assert.True(probe.AppliesTo(SqlEdition.Enterprise), $"{probe.OperationKey} must run on Developer");
-            Assert.True(probe.AppliesTo(SqlEdition.Express), $"{probe.OperationKey} must run on Express");
+            Assert.True(
+                probe.AppliesTo(SqlEdition.Enterprise) || probe.AppliesTo(SqlEdition.Express),
+                $"{probe.OperationKey} must run on at least one CI edition");
         }
     }
 
