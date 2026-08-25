@@ -255,3 +255,14 @@ the catalog CSV and the test project; Developer/Express matrix on ubuntu-latest,
 markdown report as artifact + step summary). Locally the `[VerifyFact]` tests always skip —
 `PLANIZER_CATALOG_VERIFY=1` is set only in that workflow, never on a development machine. The first
 real run (and the resulting fix round from its verdicts) has not happened yet.
+
+**Catalog verified in CI (2026-08-25):** the first two live runs on GitHub Actions (SQL Server
+2022 containers, Developer + Express) measured every behavior-catalog row. Run 1: 26/30 verified,
+two genuine catches — `alter_column_collation` was wrongly cataloged as rewrite (the swap alone is
+metadata-only; RW-009 is now Warning + inconclusive with the code-page condition) and the
+evaluator's brief-lock expectation was wrong for concurrently sampled probes. Run 2 after the
+fixes: Developer 30/30 Verified, Express 27/27 applicable rows Verified, zero Contradicted, zero
+Inconclusive. The project's oldest open question (Docker validation of the catalog) is closed;
+the weekly cron keeps it honest. Repo is live (private) at github.com/mustafaabasaran/planizer;
+the public flip is a one-command decision.
+

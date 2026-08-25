@@ -126,8 +126,8 @@ RULES.md sections 7–8. The snapshot and live modes are enabled.
 - [ ] Severity escalation based on table activity level
 - [ ] Usage-statistics check before DROP INDEX
 - [ ] Integration tests with Testcontainers
-- [ ] Container-based verification of the DDL behavior catalog (Developer = Enterprise, and Express),
-      run in CI on native amd64. **Status: harness ready; first run pending on CI** — the
+- [x] Container-based verification of the DDL behavior catalog (Developer = Enterprise, and Express),
+      run in CI on native amd64. **Status: verified in CI 2026-08-25: Developer 30/30, Express 27/27 applicable rows, zero contradictions after the collation-row correction** — the
       `tests/Planizer.CatalogVerification.Tests` probe suite (30 probes, one per catalog operation
       key) and `.github/workflows/catalog-verification.yml` (Developer/Express matrix) are in
       place; the tests are gated behind `PLANIZER_CATALOG_VERIFY=1` and always skip locally, so
