@@ -50,15 +50,45 @@ public class JoinBoundedWriteTests
     }
 
     [Theory]
-    // The target is the null-supplying side: rows without a match never reach the write.
-    [InlineData("DELETE t FROM dbo.Customers c LEFT JOIN dbo.Orders t ON t.CustomerId = c.Id;")]
-    [InlineData("DELETE t FROM dbo.Orders t RIGHT JOIN dbo.Customers c ON c.Id = t.CustomerId;")]
-    [InlineData("UPDATE t SET t.Archived = 1 FROM dbo.Customers c LEFT JOIN dbo.Orders t ON t.CustomerId = c.Id;")]
-    public void The_null_supplying_side_of_an_outer_join_stays_silent(string sql)
+    // The target is the null-supplying side: filtered exactly like an inner join, so whether every
+    // row matches is a data question — same Inconclusive verdict, no Critical on a guess.
+    [InlineData("DELETE t FROM dbo.Customers c LEFT JOIN dbo.Orders t ON t.CustomerId = c.Id;", "LEFT JOIN")]
+    [InlineData("DELETE t FROM dbo.Orders t RIGHT JOIN dbo.Customers c ON c.Id = t.CustomerId;", "RIGHT JOIN")]
+    [InlineData("UPDATE t SET t.Archived = 1 FROM dbo.Customers c LEFT JOIN dbo.Orders t ON t.CustomerId = c.Id;", "LEFT JOIN")]
+    public void The_null_supplying_side_of_an_outer_join_is_inconclusive_like_an_inner_join(string sql, string join)
     {
         var report = Analyze(sql);
 
-        Assert.DoesNotContain(report.Findings, f => f.RuleId is "MSSQL-LOCK-009" or "MSSQL-REV-001");
+        var locking = Assert.Single(report.Findings, f => f.RuleId == "MSSQL-LOCK-009");
+        Assert.Equal(Severity.Info, locking.Severity);
+        Assert.True(locking.Inconclusive);
+        Assert.Contains($"cardinality of the {join}", locking.Message);
+        Assert.DoesNotContain(report.Findings, f => f.RuleId == "MSSQL-REV-001");
+    }
+
+    [Theory]
+    // A comma list must not override the verdict of the reference that actually holds the target:
+    // the other references cross join against it and can never resurrect dropped rows.
+    [InlineData("DELETE t FROM dbo.X x, dbo.A a LEFT JOIN dbo.B t ON a.Id = t.Id;", "LEFT JOIN")]
+    [InlineData("DELETE t FROM dbo.X x, dbo.A a INNER JOIN dbo.B t ON a.Id = t.Id;", "INNER JOIN")]
+    public void A_comma_list_defers_to_the_join_holding_the_target(string sql, string join)
+    {
+        var report = Analyze(sql);
+
+        var locking = Assert.Single(report.Findings, f => f.RuleId == "MSSQL-LOCK-009");
+        Assert.Equal(Severity.Info, locking.Severity);
+        Assert.True(locking.Inconclusive);
+        Assert.Contains($"cardinality of the {join}", locking.Message);
+        Assert.DoesNotContain(report.Findings, f => f.RuleId == "MSSQL-REV-001");
+    }
+
+    [Fact]
+    public void A_comma_list_with_the_target_on_a_preserved_side_names_that_join()
+    {
+        var finding = Lock009("DELETE t FROM dbo.X x, dbo.Orders t LEFT JOIN dbo.Customers c ON c.Id = t.CustomerId;");
+
+        Assert.Equal(Severity.Warning, finding.Severity);
+        Assert.Contains("the LEFT JOIN does not restrict dbo.Orders", finding.Message);
     }
 
     [Theory]

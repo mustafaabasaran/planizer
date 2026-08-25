@@ -38,9 +38,11 @@ After the drop, reclaim the space in a maintenance window — but the two ways o
 -- Dropped column was variable-length or LOB
 -- (varchar, nvarchar, varbinary, text, ntext, image, sql_variant, xml, and their max variants):
 DBCC CLEANTABLE (0, 'dbo.Orders');
+-- (outside any BEGIN TRANSACTION … COMMIT block: CLEANTABLE cannot run inside an explicit transaction)
 
 -- Dropped column was fixed-length (int, bigint, datetime, char, decimal, uniqueidentifier, …):
-ALTER INDEX ALL ON dbo.Orders REBUILD;  -- locking: MSSQL-LOCK-006
+ALTER INDEX ALL ON dbo.Orders REBUILD;   -- clustered table    (locking: MSSQL-LOCK-006)
+ALTER TABLE dbo.Orders REBUILD;          -- heap: ALTER INDEX ALL has no effect on a heap's own pages
 ```
 
 Microsoft is explicit about the limit: DBCC CLEANTABLE
@@ -48,7 +50,10 @@ Microsoft is explicit about the limit: DBCC CLEANTABLE
 > doesn't reclaim space after a fixed-length column is dropped.
 
 Running it anyway is not merely useless — it is a fully logged operation that scans the table and
-gives back nothing. For a fixed-length column, only the rebuild reclaims the bytes. CLEANTABLE is
+gives back nothing. For a fixed-length column, only the rebuild reclaims the bytes — and on a
+heap that means `ALTER TABLE … REBUILD`, because `ALTER INDEX ALL` rebuilds only the nonclustered
+indexes and leaves the heap's own data pages untouched. CLEANTABLE also cannot run inside an
+explicit transaction, and is
 also not supported on temporary tables, so when the target is a `#`/`##` table Planizer suggests
 the rebuild alone.
 

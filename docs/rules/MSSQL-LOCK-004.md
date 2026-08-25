@@ -70,6 +70,12 @@ Version gated per statement: `ALTER INDEX … REBUILD` from `--target-version` 2
 Edition gated to Enterprise/Azure — on Standard/Express the `ONLINE = ON` statement fails
 outright (see MSSQL-LOCK-003), so this rule stays silent there.
 
+One deliberate consequence of these semantics: an online **nonclustered** `CREATE INDEX` no
+longer counts toward the report's "N taking Sch-M locks" summary, nor toward
+[MSSQL-LOCK-007](MSSQL-LOCK-007.md)/[MSSQL-LOCK-008](MSSQL-LOCK-008.md)'s
+Sch-M-in-transaction analysis — its table locks are brief S locks, and the duration-held
+`INDEX_OPERATION` Sch-M blocks concurrent DDL, not DML.
+
 ## Sources
 
 - *How online index operations work* (SQL Server docs) — the three-phase table quoted above:

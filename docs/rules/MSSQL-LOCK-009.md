@@ -38,12 +38,17 @@ sits in the join tree:
 
 | Shape | State | Reported |
 |---|---|---|
-| Target on the **null-supplying** side of a `LEFT`/`RIGHT` outer join | bounded | nothing |
+| Target on the **null-supplying** side of a `LEFT`/`RIGHT` outer join — filtered exactly like an inner join, so whether every row matches is a data question | **inconclusive** | Info, `inconclusive: true` |
 | Target on the **preserved** side of a `LEFT`/`RIGHT` outer join, or either side of `FULL OUTER JOIN` | unbounded | Warning |
 | `CROSS JOIN`, or the comma cross join (`FROM dbo.A a, dbo.B b`) | unbounded | Warning |
 | `OUTER APPLY` with the target on the left | unbounded | Warning |
 | Target not in the FROM clause at all (`UPDATE dbo.A … FROM dbo.B JOIN dbo.C`) — T-SQL cross joins it in | unbounded | Warning |
 | `INNER JOIN`, `CROSS APPLY` | **inconclusive** | Info, `inconclusive: true` |
+
+In a comma-separated FROM list (`FROM dbo.X x, dbo.A a LEFT JOIN dbo.B t ON …`) the verdict of the
+reference that holds the target stands — the other references cross join against it and can
+multiply rows but never resurrect the ones the target's own joins dropped. Only a **bare** target
+in a multi-reference list is decided by the comma cross join itself.
 
 `DELETE t FROM dbo.Orders t LEFT JOIN dbo.Customers c ON c.Id = t.CustomerId;` deletes **every**
 row of `dbo.Orders` — the outer join preserves the left side in full — and reports

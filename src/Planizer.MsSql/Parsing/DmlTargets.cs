@@ -54,9 +54,10 @@ public static class DmlTargets
     /// <summary>
     /// Classifies a DELETE/UPDATE by how much of the target table it can touch. A WHERE clause,
     /// a TOP filter or a transient target make it <see cref="JoinBoundedness.Bounded"/> outright;
-    /// otherwise the verdict comes from where the target sits in the join tree. A join is only
-    /// a filter when it can drop target rows — the null-supplying side of an outer join is,
-    /// the preserved side is not, a cross join never is, and an inner join only maybe.
+    /// otherwise the verdict comes from where the target sits in the join tree. A join can only
+    /// filter when it can drop target rows: the preserved side of an outer join and a cross join
+    /// never do (Unbounded); an inner join — and the null-supplying side of an outer join, which
+    /// filters identically — drop rows only when the data says so (Inconclusive).
     /// </summary>
     public static JoinBounds ClassifyPersistentWrite(UpdateDeleteSpecificationBase? spec)
     {
@@ -73,17 +74,31 @@ public static class DmlTargets
             return Unrestricted; // plain "DELETE FROM dbo.T;" — no FROM clause to bound it
         }
 
-        if (refs.Count > 1)
+        // "UPDATE dbo.A SET … FROM dbo.B JOIN dbo.C": the target is not in the FROM clause at
+        // all, so T-SQL cross joins it in and every row of it is written.
+        if (ResolveTargetReference(spec) is not { } target)
         {
-            // "FROM dbo.A a, dbo.B b": the comma is a cross join, so every target row survives it.
-            return new JoinBounds(JoinBoundedness.Unbounded, "comma cross join");
+            return refs.Count > 1 ? new JoinBounds(JoinBoundedness.Unbounded, "comma cross join") : Unrestricted;
         }
 
-        // "UPDATE dbo.A SET … FROM dbo.B JOIN dbo.C": the target is not in the FROM clause at all,
-        // so T-SQL cross joins it in and every row of it is written.
-        return ResolveTargetReference(spec) is { } target
-            ? Classify(refs[0], target).Bounds
-            : Unrestricted;
+        foreach (var reference in refs)
+        {
+            var (found, bounds) = Classify(reference, target);
+            if (!found)
+            {
+                continue;
+            }
+
+            // Other comma-separated references cross join against the reference holding the
+            // target: they multiply rows but can never resurrect the ones the target's own joins
+            // dropped, so that reference's verdict stands. Only a BARE target in a multi-reference
+            // list has no join of its own — that is the comma cross join itself.
+            return refs.Count > 1 && bounds == Unrestricted
+                ? new JoinBounds(JoinBoundedness.Unbounded, "comma cross join")
+                : bounds;
+        }
+
+        return Unrestricted;
     }
 
     /// <summary>Unfiltered write to a persistent table: no WHERE, no TOP, no bounding JOIN, not transient.</summary>
@@ -200,11 +215,13 @@ public static class DmlTargets
         QualifiedJoin { QualifiedJoinType: QualifiedJoinType.Inner }
             => new(JoinBoundedness.Inconclusive, "INNER JOIN"),
 
-        // An outer join preserves its outer side in full and filters only the null-supplying one.
+        // An outer join preserves its outer side in full. Its null-supplying side is filtered
+        // exactly like an inner join — only rows with a match survive — and whether every row
+        // matches is a data question, so it gets the same Inconclusive verdict as INNER JOIN.
         QualifiedJoin { QualifiedJoinType: QualifiedJoinType.LeftOuter }
-            => new(targetOnLeft ? JoinBoundedness.Unbounded : JoinBoundedness.Bounded, "LEFT JOIN"),
+            => new(targetOnLeft ? JoinBoundedness.Unbounded : JoinBoundedness.Inconclusive, "LEFT JOIN"),
         QualifiedJoin { QualifiedJoinType: QualifiedJoinType.RightOuter }
-            => new(targetOnLeft ? JoinBoundedness.Bounded : JoinBoundedness.Unbounded, "RIGHT JOIN"),
+            => new(targetOnLeft ? JoinBoundedness.Inconclusive : JoinBoundedness.Unbounded, "RIGHT JOIN"),
         QualifiedJoin { QualifiedJoinType: QualifiedJoinType.FullOuter }
             => new(JoinBoundedness.Unbounded, "FULL OUTER JOIN"),
 

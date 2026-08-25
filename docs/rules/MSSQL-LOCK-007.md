@@ -44,6 +44,11 @@ COMMIT;
 If the statements genuinely must be atomic, keep the transaction as short as possible, add
 `SET LOCK_TIMEOUT` (MSSQL-LOCK-010), and schedule a maintenance window.
 
+Online **nonclustered** `CREATE INDEX` statements do not count as Sch-M holders here (their
+table locks are brief S locks; see [MSSQL-LOCK-004](MSSQL-LOCK-004.md)). Online clustered
+creates/drops and every rebuild still count — their final-phase Sch-M is held to the COMMIT like
+any other.
+
 ## Assumptions (version / edition)
 
 Not version or edition dependent. Which statements count as Sch-M-acquiring comes from the

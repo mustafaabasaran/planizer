@@ -96,7 +96,8 @@ public class FixTextTests
         // ... and the fixed-length case is explicitly told that CLEANTABLE does nothing there.
         Assert.Contains("Fixed-length", finding.Fix);
         Assert.Contains("CLEANTABLE reclaims nothing there", finding.Fix);
-        Assert.Contains("ALTER INDEX ALL ON dbo.Orders REBUILD;", finding.Fix);
+        Assert.Contains("clustered table: ALTER INDEX ALL ON dbo.Orders REBUILD; heap: ALTER TABLE dbo.Orders REBUILD;", finding.Fix);
+        Assert.Contains("CLEANTABLE cannot run inside an explicit transaction", finding.Fix);
     }
 
     [Fact]
@@ -109,7 +110,7 @@ public class FixTextTests
         Assert.NotNull(finding.Fix);
         Assert.DoesNotContain("DBCC CLEANTABLE (0,", finding.Fix);
         Assert.Contains("not supported on temporary tables", finding.Fix);
-        Assert.Contains("ALTER INDEX ALL ON #Staging REBUILD;", finding.Fix);
+        Assert.Contains("clustered table: ALTER INDEX ALL ON #Staging REBUILD; heap: ALTER TABLE #Staging REBUILD;", finding.Fix);
     }
 
     // ---- MSSQL-REV-001 ------------------------------------------------------------------

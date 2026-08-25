@@ -59,7 +59,9 @@ public sealed class DropColumnRule : MsSqlRuleBase
     /// </summary>
     private static string ReclaimFix(string table, bool isTempTable)
     {
-        var rebuild = $"ALTER INDEX ALL ON {table} REBUILD; (locking: MSSQL-LOCK-006)";
+        // ALTER INDEX ALL has no effect on a heap's own data pages; the heap form is
+        // ALTER TABLE … REBUILD. Whether the table is a heap is unknowable offline, so name both.
+        var rebuild = $"clustered table: ALTER INDEX ALL ON {table} REBUILD; heap: ALTER TABLE {table} REBUILD; (locking: MSSQL-LOCK-006)";
 
         return isTempTable
             ? "After the drop, rebuild to reclaim the space — DBCC CLEANTABLE is not supported on "
@@ -67,7 +69,9 @@ public sealed class DropColumnRule : MsSqlRuleBase
             : "After the drop, reclaim the space with the operation that matches the dropped "
               + "column's type:\n"
               + "Variable-length or LOB (varchar, nvarchar, varbinary, text, ntext, image, "
-              + $"sql_variant, xml and their max variants): DBCC CLEANTABLE (0, '{table}');\n"
+              + $"sql_variant, xml and their max variants): DBCC CLEANTABLE (0, '{table}'); "
+              + "— run it outside any BEGIN TRANSACTION … COMMIT block, CLEANTABLE cannot run "
+              + "inside an explicit transaction\n"
               + "Fixed-length (int, bigint, datetime, char, decimal, uniqueidentifier and the like): "
               + "CLEANTABLE reclaims nothing there — it is a fully logged no-op — so rebuild instead: "
               + rebuild;

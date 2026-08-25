@@ -54,9 +54,8 @@ rows of the target**. The rule shares
 
 | Shape | State | Reported |
 |---|---|---|
-| Target on the **null-supplying** side of a `LEFT`/`RIGHT` outer join | bounded | nothing |
 | Target on the **preserved** side of a `LEFT`/`RIGHT` outer join, either side of `FULL OUTER JOIN`, any `CROSS JOIN` or comma cross join, `OUTER APPLY` with the target on the left | unbounded | **Critical** |
-| `INNER JOIN`, `CROSS APPLY` | **inconclusive** | nothing here; MSSQL-LOCK-009 reports Info |
+| `INNER JOIN`, `CROSS APPLY`, or the **null-supplying** side of a `LEFT`/`RIGHT` outer join (filtered exactly like an inner join) | **inconclusive** | nothing here; MSSQL-LOCK-009 reports Info |
 
 ```sql
 DELETE t FROM dbo.Orders t LEFT JOIN dbo.Customers u ON u.Id = t.CustomerId;

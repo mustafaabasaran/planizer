@@ -37,7 +37,7 @@ Phase plan:
 - Statements that take Sch-M: ALTER TABLE (most forms), CREATE/DROP INDEX (offline), ALTER INDEX REBUILD (offline), DROP TABLE, TRUNCATE, sp_rename, ALTER TABLE SWITCH.
 - Offline CREATE INDEX: nonclustered takes an S lock on the table (reads allowed, no writes); clustered takes Sch-M (nothing allowed).
 - Is ONLINE = ON present? If not and the edition supports it, suggest it. Online index operations are Enterprise only (plus Azure and Developer).
-- Even with ONLINE = ON, note that a short Sch-M is taken at the start and at the end; check whether WAIT_AT_LOW_PRIORITY (2014+) is used, and suggest it if not.
+- Even with ONLINE = ON, short table locks remain: the preparation phase takes S, and the final phase takes S for a nonclustered create or Sch-M for a clustered create/drop or any rebuild (the duration-held Sch-M is an INDEX_OPERATION object lock that blocks concurrent DDL, not DML). Check whether WAIT_AT_LOW_PRIORITY (2014+) is used, and suggest it if not.
 - Can RESUMABLE = ON be used (REBUILD 2017+, CREATE 2019+)? Suggest it for long-running index operations.
 - ALTER INDEX REORGANIZE is always online; flag the cases where it could be suggested instead of REBUILD.
 - Multiple Sch-M locks within the same transaction: the lock is held until the transaction ends; compute the total blocking window and warn.
