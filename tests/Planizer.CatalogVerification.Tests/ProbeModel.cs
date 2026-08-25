@@ -56,6 +56,14 @@ public sealed record ProbeObservation
 
     public BlockingProfile? Blocking { get; init; }
 
+    /// <summary>
+    /// True when the blocking profile was sampled WHILE the DDL executed (see
+    /// <c>Measurement.ConcurrentBlockingProfileAsync</c>) rather than from a held-open
+    /// transaction. Brief locks are invisible to that technique, so the expected profile of a
+    /// brief lock level is "nothing blocked".
+    /// </summary>
+    public bool SampledDuringExecution { get; init; }
+
     public ErrorObservation? Error { get; init; }
 
     public static ProbeObservation FromMeasurement(ActMeasurement measurement, int rowCount) => new()
@@ -209,6 +217,21 @@ public static class VerdictEvaluator
         _ => throw new ArgumentOutOfRangeException(nameof(lockLevel), lockLevel, "Unknown lock level."),
     };
 
+    /// <summary>
+    /// What a prober should see WHILE the DDL runs. Brief locks (<c>schm_brief</c>,
+    /// <c>s_brief</c>) exist only in the preparation/final instants — during the build phase of
+    /// an online operation concurrent DML is the whole point — so they map to "nothing blocked";
+    /// duration locks map as in <see cref="ExpectedBlockingProfile"/>.
+    /// </summary>
+    public static BlockingProfile DuringExecutionBlockingProfile(LockLevel lockLevel) => lockLevel switch
+    {
+        LockLevel.SchM => new BlockingProfile(ReadsBlocked: true, WritesBlocked: true),
+        LockLevel.STable => new BlockingProfile(ReadsBlocked: false, WritesBlocked: true),
+        LockLevel.SchMBrief or LockLevel.SBrief or LockLevel.None
+            => new BlockingProfile(ReadsBlocked: false, WritesBlocked: false),
+        _ => throw new ArgumentOutOfRangeException(nameof(lockLevel), lockLevel, "Unknown lock level."),
+    };
+
     private static void EvaluateMovement(
         DdlBehavior row, ProbeObservation observation,
         List<string> matches, List<string> mismatches, List<string> unknowns)
@@ -258,7 +281,9 @@ public static class VerdictEvaluator
             return;
         }
 
-        var expected = ExpectedBlockingProfile(row.Lock);
+        var expected = observation.SampledDuringExecution
+            ? DuringExecutionBlockingProfile(row.Lock)
+            : ExpectedBlockingProfile(row.Lock);
         var detail = $"measured readsBlocked={measured.ReadsBlocked}, writesBlocked={measured.WritesBlocked}";
         if (measured == expected)
         {

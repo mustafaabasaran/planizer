@@ -56,7 +56,7 @@ The least understood and most prod-breaking area in MSSQL. The core: a **stateme
 - ALTER COLUMN type narrowing: data loss + full scan + failure risk.
 - ALTER COLUMN NULL→NOT NULL: full scan (validation); fails if NULLs exist.
 - ALTER COLUMN NOT NULL→NULL: metadata-only.
-- ALTER COLUMN collation change: rewrite + the dependent indexes are recreated.
+- ALTER COLUMN collation change: metadata-only while the code page is unchanged (measured); varchar across code pages is converted (size-of-data), and dependent indexes must be dropped first.
 - ALTER COLUMN on a column that has an index/constraint/computed column/statistics on it: fails; those must be dropped first.
 - DROP COLUMN: metadata-only, but the space is not reclaimed; suggest DBCC CLEANTABLE or a rebuild.
 - Adding a PERSISTED computed column: full scan + write.

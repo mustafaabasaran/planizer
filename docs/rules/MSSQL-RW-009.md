@@ -1,6 +1,6 @@
-# MSSQL-RW-009 — Changing a column collation rewrites the column and needs dependent indexes dropped
+# MSSQL-RW-009 — Changing a column collation may convert the data and needs dependent objects dropped
 
-**Default severity:** Critical · **Category:** Rewrite vs metadata-only
+**Default severity:** Warning (inconclusive offline) · **Category:** Rewrite vs metadata-only
 
 ## What it checks
 
@@ -23,8 +23,10 @@ index build with its own locking profile (MSSQL-LOCK-002).
 ALTER TABLE dbo.Orders ALTER COLUMN CustomerName nvarchar(200) COLLATE Latin1_General_100_CI_AS;
 ```
 
-Reports: `Critical MSSQL-RW-009 … Changing the collation of column CustomerName on dbo.Orders
-rewrites the column data; indexes, constraints and statistics that depend on the column must be
+Reports: `Warning MSSQL-RW-009 … Changing the collation of column CustomerName on dbo.Orders
+is metadata-only while the code page stays the same, but a varchar column moving to a different
+code page is converted (size-of-data), and indexes, constraints or statistics depending on the
+column must be
 dropped first or the statement fails.`
 
 The same ALTER without the COLLATE clause is not this rule's concern.
@@ -39,4 +41,7 @@ change, `COLLATE` in the query predicate avoids the DDL entirely.
 
 ## Assumptions (version / edition)
 
-A rewrite on every version and edition (catalog row `alter_column_collation`).
+Not version or edition dependent (catalog row `alter_column_collation`). CI measurement against a
+real SQL Server showed the collation swap alone writes only metadata (≈0.5 KB of log on a 100k-row
+table); the size-of-data conversion happens when a varchar column crosses code pages, which cannot
+be decided offline — hence the inconclusive Warning rather than a hard Critical.

@@ -256,8 +256,10 @@ public sealed class AlterColumnNotNullToNullProbe : CatalogProbeBase
 /// <summary>
 /// Catalog row <c>alter_column_collation</c> (any edition): <c>schm</c> / <c>rewrite</c>. The
 /// target collation (<c>Latin1_General_100_CI_AS</c>) differs from the container default
-/// (<c>SQL_Latin1_General_CP1_CI_AS</c>); no index depends on the column, so the catalog's
-/// "dependent indexes must be dropped first" note does not interfere with the measurement.
+/// (<c>SQL_Latin1_General_CP1_CI_AS</c>) but shares its code page (1252), so the swap writes
+/// metadata only — the first CI run measured ~0.5 KB of log and corrected the catalog row from
+/// "rewrite" to "metadata_only". The size-of-data branch (varchar crossing code pages) and the
+/// dependent-index restriction remain documented on MSSQL-RW-009.
 /// </summary>
 public sealed class AlterColumnCollationProbe : CatalogProbeBase
 {

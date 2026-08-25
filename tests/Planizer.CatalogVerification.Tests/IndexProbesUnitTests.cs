@@ -42,13 +42,22 @@ public sealed class IndexProbesUnitTests
     /// operation key. Derived from the catalog lock levels and pinned here so a catalog edit
     /// that silently changes what a probe asserts fails a unit test first.
     /// </summary>
+    /// <summary>Probes that sample while the DDL runs instead of holding the transaction open.</summary>
+    private static readonly IReadOnlySet<string> ConcurrentlySampledKeys = new HashSet<string>(StringComparer.Ordinal)
+    {
+        DdlOperationKeys.CreateNonclusteredIndexOffline,
+        DdlOperationKeys.CreateNonclusteredIndexOnline,
+        DdlOperationKeys.AlterIndexReorganize,
+    };
+
     private static readonly IReadOnlyDictionary<string, BlockingProfile> ExpectedProfiles =
         new Dictionary<string, BlockingProfile>(StringComparer.Ordinal)
         {
             // s_table: reads allowed, writes blocked (MSSQL-LOCK-002).
             [DdlOperationKeys.CreateNonclusteredIndexOffline] = new(ReadsBlocked: false, WritesBlocked: true),
-            // s_brief: an online nonclustered build never takes a blocking table Sch-M (MSSQL-LOCK-004).
-            [DdlOperationKeys.CreateNonclusteredIndexOnline] = new(ReadsBlocked: false, WritesBlocked: true),
+            // s_brief, sampled during the build: online means concurrent DML — nothing blocked
+            // mid-build; the brief S locks live only in the preparation/final instants.
+            [DdlOperationKeys.CreateNonclusteredIndexOnline] = new(ReadsBlocked: false, WritesBlocked: false),
             // schm: all access blocked.
             [DdlOperationKeys.CreateClusteredIndexOnHeap] = new(ReadsBlocked: true, WritesBlocked: true),
             [DdlOperationKeys.DropClusteredIndex] = new(ReadsBlocked: true, WritesBlocked: true),
@@ -102,7 +111,10 @@ public sealed class IndexProbesUnitTests
             // Evaluate on an edition the probe runs on; Enterprise covers all index probes.
             var row = Catalog.Lookup(probe.OperationKey, SqlServerVersion.Sql2022, SqlEdition.Enterprise);
             Assert.NotNull(row);
-            Assert.Equal(ExpectedProfiles[probe.OperationKey], VerdictEvaluator.ExpectedBlockingProfile(row.Lock));
+            var expected = ConcurrentlySampledKeys.Contains(probe.OperationKey)
+                ? VerdictEvaluator.DuringExecutionBlockingProfile(row.Lock)
+                : VerdictEvaluator.ExpectedBlockingProfile(row.Lock);
+            Assert.Equal(ExpectedProfiles[probe.OperationKey], expected);
         }
     }
 

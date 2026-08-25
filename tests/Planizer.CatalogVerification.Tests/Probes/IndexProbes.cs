@@ -49,7 +49,7 @@ public abstract class IndexBlockingProbeBase : CatalogProbeBase
     {
         var profile = await Measurement.ConcurrentBlockingProfileAsync(
             session.OpenConnectionAsync, ddlSql, ReadProbeSql, WriteProbeSql);
-        return new ProbeObservation { Blocking = profile };
+        return new ProbeObservation { Blocking = profile, SampledDuringExecution = true };
     }
 }
 
@@ -91,8 +91,9 @@ public sealed class CreateNonclusteredIndexOfflineProbe : IndexBlockingProbeBase
 
     public override ProbeExpectation Expectation => new(ProbeAspects.Blocking);
 
-    // A wide window: half a million rows keep the offline build observable from the prober.
-    protected override int RowCount => 500_000;
+    // First CI run finished the 500k build inside the sampling gap; two million rows keep the
+    // offline build observable from the prober.
+    protected override int RowCount => 2_000_000;
 
     public override Task<ProbeObservation> ActAsync(ProbeSession session) =>
         MeasureConcurrentBlockingAsync(
