@@ -22,7 +22,7 @@ public sealed class SarifReportWriter : IReportWriter
     public const string SchemaUri = "https://json.schemastore.org/sarif-2.1.0.json";
     public const string SarifVersion = "2.1.0";
     public const string ToolName = "Planizer";
-    public const string InformationUri = "https://github.com/mustafabasaran/planizer";
+    public const string InformationUri = "https://github.com/mustafaabasaran/planizer";
     public const string SourceRootId = "%SRCROOT%";
 
     private static readonly JsonWriterOptions WriterOptions = new()

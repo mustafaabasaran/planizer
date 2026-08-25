@@ -7,7 +7,7 @@
         "driver": {
           "name": "Planizer",
           "semanticVersion": "0.1.0",
-          "informationUri": "https://github.com/mustafabasaran/planizer",
+          "informationUri": "https://github.com/mustafaabasaran/planizer",
           "rules": [
             {
               "id": "MSSQL-BATCH-001",
