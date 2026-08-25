@@ -21,7 +21,7 @@ For the detailed rule list, see [RULES.md](RULES.md).
 
 | Layer | Choice |
 |---|---|
-| Language / runtime | C# / .NET 8+ (Native AOT single binary) |
+| Language / runtime | C# / .NET 10 (current LTS; `RollForward=LatestMajor` so the tool runs on later majors) |
 | MSSQL parser | Microsoft.SqlServer.TransactSql.ScriptDom |
 | Postgres parser | Phase 4: Squawk adapter → later a libpg_query binding |
 | DB access | Microsoft.Data.SqlClient, Npgsql |
@@ -167,6 +167,25 @@ PerformanceStudio's territory. Adapter first, native later.
 - [ ] EXPLAIN (FORMAT JSON) analysis: Seq Scan, nested loop, sort spill, missing index estimate
 - [ ] `ISchemaProvider`/`IStatsProvider` Postgres implementations (pg_catalog, pg_stat_*)
 - [ ] Automatic dialect detection
+
+## Runtime and distribution
+
+The analyzer is a build-time tool, so the runtime it targets is a distribution decision, not an
+architectural one: the fewer prerequisites a CI agent needs, the more places it can run.
+
+- [x] Target the current LTS runtime (**.NET 10**). Moved off .NET 8 before its November 2026
+      end of support; a linter shipped on an unsupported runtime is a hard sell. One
+      `TargetFramework` in `Directory.Build.props` drives every project.
+- [x] `RollForward=LatestMajor` on the CLI so the installed tool starts on any newer runtime
+      rather than demanding the exact major it was built against.
+- [x] Build the CLI from a located path (never a literal `bin/Release/<tfm>/`) in `action.yml`
+      and `scripts/corpus-scan.sh`, so a future runtime bump cannot break them silently.
+- [ ] Native AOT single binary per platform, attached to GitHub Releases — no .NET on the agent
+      at all. Needs a check that ScriptDom survives trimming; the fallback is a self-contained
+      (non-trimmed) publish.
+- [ ] Docker image (`ghcr.io`), so `docker run … analyze` works with no toolchain whatsoever.
+- [ ] Publish to NuGet.org as `dotnet tool install --global Planizer` (needs an API key);
+      afterwards the "build from source" paths in the README and the action can be simplified.
 
 ## Phase 5 — Ecosystem
 

@@ -53,8 +53,10 @@ Design decisions:
 
 ## Install
 
-Planizer is a .NET 8 CLI packaged as a `dotnet tool`. It is **not yet published to NuGet.org**;
-until then, build and install it from source:
+Planizer is a .NET 10 CLI packaged as a `dotnet tool`, built against the current LTS runtime and
+rolling forward to newer majors (`RollForward=LatestMajor`), so it also runs on whatever later
+.NET is already installed on a build agent. It is **not yet published to NuGet.org**; until then,
+build and install it from source:
 
 ```sh
 git clone <this repo> && cd planizer
@@ -309,7 +311,7 @@ Inputs:
 | `fail-on` | `critical` | `info`, `warning`, `critical`, `blocker` — lowest severity that fails the step |
 | `config` | — | Path to a `.planizer.json`; empty discovers the nearest one |
 | `sarif-file` | `planizer.sarif` | Where the SARIF 2.1.0 report is written, relative to the workspace |
-| `dotnet-version` | `8.0.x` | .NET SDK used to build and run the CLI |
+| `dotnet-version` | `10.0.x` | .NET SDK used to build and run the CLI |
 
 `target-version`, `edition` and `fail-on` are passed to the CLI as options and therefore
 **override** the values in `.planizer.json`; set an input to `''` to defer to the config file

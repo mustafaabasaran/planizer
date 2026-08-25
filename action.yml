@@ -55,7 +55,7 @@ inputs:
   dotnet-version:
     description: .NET SDK version used to build and run the CLI.
     required: false
-    default: 8.0.x
+    default: 10.0.x
 
 outputs:
   sarif-file:
@@ -93,7 +93,13 @@ runs:
         INPUT_ROLLBACK: ${{ inputs.rollback }}
         INPUT_SARIF_FILE: ${{ inputs.sarif-file }}
       run: |
-        cli="$GITHUB_ACTION_PATH/src/Planizer.Cli/bin/Release/net8.0/Planizer.Cli.dll"
+        # Located rather than hard-coded: the path carries the target framework, so a TFM bump
+        # would silently break a literal path.
+        cli="$(find "$GITHUB_ACTION_PATH/src/Planizer.Cli/bin/Release" -name 'Planizer.Cli.dll' -type f -exec ls -t {} + | head -1)"
+        if [ -z "$cli" ]; then
+          echo "planizer-action: the CLI build produced no Planizer.Cli.dll" >&2
+          exit 2
+        fi
 
         # Inputs reach the script through env vars (never interpolated into the shell text),
         # so a path or option value cannot inject commands. A multi-line value is one path per

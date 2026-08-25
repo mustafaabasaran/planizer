@@ -3,6 +3,12 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <RootNamespace>Planizer.Cli</RootNamespace>
+    <!--
+      Without this the generated runtimeconfig rolls forward only within the target major, so the
+      tool refuses to start on a machine that has a newer runtime but not this exact one. A linter
+      installed on build agents must run on whatever .NET is already there.
+    -->
+    <RollForward>LatestMajor</RollForward>
   </PropertyGroup>
 
   <PropertyGroup>

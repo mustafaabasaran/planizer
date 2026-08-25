@@ -34,7 +34,8 @@ cli="${PLANIZER_CLI:-}"
 if [ -z "$cli" ]; then
     echo "building src/Planizer.Cli (Release)..." >&2
     dotnet build "$repo_root/src/Planizer.Cli" -c Release --nologo -v quiet >&2
-    cli="$repo_root/src/Planizer.Cli/bin/Release/net8.0/Planizer.Cli.dll"
+    # Located rather than hard-coded so a target-framework bump does not break the script.
+    cli="$(find "$repo_root/src/Planizer.Cli/bin/Release" -name 'Planizer.Cli.dll' -type f -exec ls -t {} + | head -1)"
 fi
 if [ ! -f "$cli" ]; then
     echo "corpus-scan: CLI not found at $cli" >&2

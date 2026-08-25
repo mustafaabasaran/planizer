@@ -62,7 +62,7 @@ rationale). These are not separate features; they are two outputs of the same ru
 
 | Layer | Choice | Note |
 |---|---|---|
-| Language | C# / .NET 8+ | Single-binary CLI via Native AOT |
+| Language | C# / .NET 10 (LTS) | Single-binary CLI via Native AOT |
 | MSSQL parser | Microsoft.SqlServer.TransactSql.ScriptDom | The only serious T-SQL parser; it decided the language choice |
 | Postgres parser | Phase 4: Squawk adapter first, then a libpg_query binding | .NET binding status to be researched |
 | DB access | Microsoft.Data.SqlClient, Npgsql | |
