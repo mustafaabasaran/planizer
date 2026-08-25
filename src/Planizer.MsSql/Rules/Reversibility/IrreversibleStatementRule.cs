@@ -51,7 +51,7 @@ public sealed class IrreversibleStatementRule : MsSqlRuleBase
                               "be undone; keep a copy first and delete in batches."
                             : $"The {bounds.Join} does not restrict {table}; every row is deleted and " +
                               "cannot be restored — keep a copy first and delete in batches.",
-                        fix: $"SELECT * INTO {table}_backup FROM {table}; -- verify, then delete in batches with a WHERE clause");
+                        fix: BackupCopyFix(table, "then delete in batches with a WHERE clause"));
                 }
 
                 continue;
@@ -77,10 +77,25 @@ public sealed class IrreversibleStatementRule : MsSqlRuleBase
                 _ => CreateFinding(statement, Severity.Critical, // TRUNCATE TABLE
                     $"TRUNCATE TABLE removes every row of {TruncateTarget(statement)} and the data " +
                     "cannot be restored after commit; keep a copy first.",
-                    fix: $"SELECT * INTO {TruncateTarget(statement)}_backup FROM {TruncateTarget(statement)}; -- verify, then truncate"),
+                    fix: BackupCopyFix(TruncateTarget(statement), "then truncate")),
             };
         }
     }
+
+    /// <summary>
+    /// Keep-a-copy-first suggestion for the two wipe cases (unbounded DELETE, TRUNCATE). The target
+    /// name is date-stamped because a fixed <c>_backup</c> suffix already exists the second time
+    /// the migration runs and <c>SELECT … INTO</c> then fails with error 2714 — a poor look in a
+    /// tool that ships three idempotency rules. The copy is deliberately labelled data-only:
+    /// "Indexes, constraints, and triggers defined in the source table aren't transferred to the
+    /// new table", which is exactly what a restore path wants — the originals still live on the
+    /// source table.
+    /// </summary>
+    private static string BackupCopyFix(string table, string thenWhat)
+        => "-- Data-only copy: SELECT … INTO transfers no indexes, constraints or triggers, which is what a restore path needs.\n"
+           + "-- Date-stamp the target; a fixed _backup name already exists on a re-run and fails with error 2714.\n"
+           + $"SELECT * INTO {table}_backup_<yyyymmdd> FROM {table};\n"
+           + $"-- Verify the copy, {thenWhat}.";
 
     /// <summary>Catalog verdict for the DDL statement: only an explicit <c>reversible=no</c> row counts.</summary>
     private static bool IsIrreversibleDdl(SqlStatementInfo statement, MsSqlAnalysisContext context)

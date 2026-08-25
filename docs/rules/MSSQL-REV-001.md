@@ -37,6 +37,13 @@ All four report Critical. For the DROP TABLE the suggested fix is generated as S
 EXEC sp_rename 'dbo.LegacyOrders', 'LegacyOrders_deprecated';
 ```
 
+For the TRUNCATE and the WHERE-less DELETE the suggested fix is a keep-a-copy-first snippet with
+a date-stamped, data-only target (see *How to fix* below for why both of those matter):
+
+```sql
+SELECT * INTO dbo.AuditLog_backup_<yyyymmdd> FROM dbo.AuditLog;
+```
+
 A `DELETE … WHERE`, an `ADD COLUMN`, or a `CREATE INDEX` does not trigger the rule.
 
 ## When a JOIN does not save you
@@ -66,8 +73,6 @@ instead, and a schema/statistics snapshot (Phase 2) settles it.
 
 A WHERE-less DELETE on a table variable or temp table is not irreversible either (no persistent
 data), whether the target is named directly or through an alias.
-
-
 DDL on temp tables (`DROP TABLE #t`, `TRUNCATE TABLE #t`) is ignored as well — nothing persistent
 is lost.
 
@@ -78,9 +83,34 @@ release, watch for anything that breaks, and drop in a *later* release. For an u
 and for TRUNCATE, keep a copy first:
 
 ```sql
-SELECT * INTO dbo.SessionCache_backup FROM dbo.SessionCache;
--- verify, then delete in batches with a WHERE clause
+-- Data-only copy: SELECT … INTO transfers no indexes, constraints or triggers,
+-- which is what a restore path needs.
+-- Date-stamp the target; a fixed _backup name already exists on a re-run
+-- and fails with error 2714.
+SELECT * INTO dbo.SessionCache_backup_<yyyymmdd> FROM dbo.SessionCache;
+-- Verify the copy, then delete in batches with a WHERE clause.
 ```
+
+Two details in that snippet are deliberate.
+
+**The date stamp.** A fixed `_backup` suffix is a landmine in a script that may be re-run: the
+target already exists the second time around and `SELECT … INTO` fails outright —
+
+> There is already an object named 'SessionCache_backup' in the database. (error 2714)
+
+Replace `<yyyymmdd>` with the deployment date (or any other unique token) so the second run
+creates its own copy instead of dying on the first statement. A tool that ships three idempotency
+rules should not hand out a fix that breaks on a re-run.
+
+**The copy holds data only.** `SELECT … INTO` is not a table clone:
+
+> Indexes, constraints, and triggers defined in the source table aren't transferred to the new
+> table, nor can you specify them in the SELECT...INTO statement.
+
+That is the right shape here and does not need fixing. The copy exists to answer "what was in
+those rows", and the indexes, constraints and triggers are still on the *source* table — the
+DELETE/TRUNCATE removes rows, not the table's definition. Recreating them on the backup would
+only slow the copy down and duplicate constraint names.
 
 ## Assumptions (version / edition)
 

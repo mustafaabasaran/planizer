@@ -37,6 +37,32 @@ WITH (ONLINE = ON, RESUMABLE = ON, MAX_DURATION = 60 MINUTES);
 `MAX_DURATION` auto-pauses the operation after the given time instead of letting it run
 unbounded.
 
+## Limitations of the fix
+
+`RESUMABLE = ON` cannot simply be pasted onto every online index operation. Microsoft's
+"Resumable index operations / Current functional limitations" states it plainly:
+
+> The DDL command with RESUMABLE = ON can't be executed inside an explicit transaction.
+
+Adding the option inside a `BEGIN TRANSACTION … COMMIT` block turns a working migration into one
+that fails at runtime with **error 574**. Planizer therefore looks at the transaction context:
+
+```sql
+BEGIN TRANSACTION;
+CREATE INDEX IX ON dbo.T (C) WITH (ONLINE = ON);
+COMMIT;
+```
+
+still reports the Info — a killed build loses its progress here exactly as it does anywhere else —
+but the suggested fix becomes *"move the `CREATE INDEX` out of the `BEGIN TRANSACTION … COMMIT`
+block, then add `RESUMABLE = ON`"* instead of *"add `RESUMABLE = ON`"*.
+
+The script is not the whole story: a migration runner can open a transaction the script never
+mentions (DbUp with a transaction per script, SSDT, EF's transactional scripts). That transaction
+is invisible offline and breaks `RESUMABLE = ON` the same way, so **every** MSSQL-LOCK-005 fix
+carries the standing caveat that the index operation has to run outside any transaction — the
+runner's included.
+
 ## Assumptions (version / edition)
 
 Version gated: `REBUILD` is resumable from `--target-version` 2017, `CREATE INDEX` from 2019.

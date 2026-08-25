@@ -40,6 +40,11 @@ public class JoinBoundedWriteTests
         Assert.Equal(Severity.Critical, irreversible.Severity);
         Assert.Contains($"The {join} does not restrict dbo.Orders; every row is deleted", irreversible.Message);
 
+        // The join-aware message and the date-stamped, data-only backup fix arrived on separate
+        // branches and meet only here; a fixed _backup target would fail with 2714 on a re-run.
+        Assert.Contains("SELECT * INTO dbo.Orders_backup_<yyyymmdd> FROM dbo.Orders;", irreversible.Fix);
+        Assert.DoesNotContain("INTO dbo.Orders_backup FROM", irreversible.Fix);
+
         // REV-002 mirrors REV-001's trigger set, so it must not double-flag the same statement.
         Assert.DoesNotContain(report.Findings, f => f.RuleId == "MSSQL-REV-002");
     }
