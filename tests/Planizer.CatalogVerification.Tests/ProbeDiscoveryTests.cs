@@ -7,7 +7,7 @@ namespace Planizer.CatalogVerification.Tests;
 public sealed class ProbeDiscoveryTests
 {
     [Fact]
-    public void Discovery_is_type_name_ordered_and_includes_the_exemplar_probes()
+    public void Discovery_is_type_name_ordered_and_includes_the_registered_probes()
     {
         // Probe files are contributed by parallel tasks, so this asserts the discovery
         // contract (deterministic type-name order) and the T1 exemplars rather than an exact
@@ -22,7 +22,15 @@ public sealed class ProbeDiscoveryTests
             {
                 DdlOperationKeys.AddColumnNotNullDefaultConst,
                 DdlOperationKeys.AddColumnNullable,
+                DdlOperationKeys.AddPkOrUnique,
+                DdlOperationKeys.AlterIndexRebuildOffline,
+                DdlOperationKeys.AlterIndexRebuildOnline,
+                DdlOperationKeys.AlterIndexReorganize,
+                DdlOperationKeys.CreateClusteredIndexOnHeap,
+                DdlOperationKeys.CreateClusteredIndexOnline,
                 DdlOperationKeys.CreateNonclusteredIndexOffline,
+                DdlOperationKeys.CreateNonclusteredIndexOnline,
+                DdlOperationKeys.DropClusteredIndex,
             },
             keys);
     }
@@ -52,12 +60,15 @@ public sealed class ProbeDiscoveryTests
     }
 
     [Fact]
-    public void Every_exemplar_probe_applies_to_both_ci_editions()
+    public void Every_probe_applies_to_at_least_one_ci_edition()
     {
+        // Probes for enterprise-scoped catalog rows (the online index operations) run only on
+        // the Developer leg of the CI matrix; every probe must still run somewhere.
         foreach (var probe in ProbeRunner.DiscoverProbes())
         {
-            Assert.True(probe.AppliesTo(SqlEdition.Enterprise), $"{probe.OperationKey} must run on Developer");
-            Assert.True(probe.AppliesTo(SqlEdition.Express), $"{probe.OperationKey} must run on Express");
+            Assert.True(
+                probe.AppliesTo(SqlEdition.Enterprise) || probe.AppliesTo(SqlEdition.Express),
+                $"{probe.OperationKey} must run on at least one CI edition");
         }
     }
 

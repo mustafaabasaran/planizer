@@ -19,6 +19,13 @@ public sealed class CatalogLookupTests
     {
         foreach (var probe in ProbeRunner.DiscoverProbes())
         {
+            if (!probe.AppliesTo(edition))
+            {
+                // Edition-gated probes verify enterprise-scoped rows; their keys deliberately
+                // have no row on the editions they skip (the absence is the catalog's claim).
+                continue;
+            }
+
             var row = Catalog.Lookup(probe.OperationKey, SqlServerVersion.Sql2022, edition);
             Assert.True(row is not null, $"no catalog row for '{probe.OperationKey}' on {edition}/Sql2022");
         }
