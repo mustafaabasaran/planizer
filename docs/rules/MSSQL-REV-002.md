@@ -33,6 +33,14 @@ count (see [ADR-0001](../adr/0001-rev-002-dml-findings-aggregated-per-file.md)).
 noise on top of a stronger signal: irreversible statements (MSSQL-REV-001 — no script can
 restore that data) and dynamic SQL (MSSQL-DYN-001 — contents unknown).
 
+That first exclusion mirrors MSSQL-REV-001 exactly, join analysis included. A `DELETE` whose FROM
+clause holds a join that **cannot drop rows of the target** — an outer join with the target on its
+preserved side, a `CROSS JOIN` or comma cross join, an `OUTER APPLY` on the left — is REV-001's
+Critical, so this rule keeps quiet about it. A `DELETE` whose join **may or may not** bound it
+(`INNER JOIN`, `CROSS APPLY`) is inconclusive: REV-001 stays out of it, and the statement simply
+joins this rule's per-file DML summary like any other `DELETE`. See
+[MSSQL-LOCK-009](MSSQL-LOCK-009.md) for the full three-state table.
+
 ## Why it matters
 
 "How do we roll this back?" is a standard deployment-review question, and the honest answer is
