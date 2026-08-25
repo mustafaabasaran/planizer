@@ -7,15 +7,23 @@ namespace Planizer.CatalogVerification.Tests;
 public sealed class ProbeDiscoveryTests
 {
     [Fact]
-    public void Exactly_the_exemplar_probes_are_discovered_in_type_name_order()
+    public void Discovery_is_type_name_ordered_and_includes_the_exemplar_probes()
     {
-        var keys = ProbeRunner.DiscoverProbes().Select(p => p.OperationKey).ToList();
-        Assert.Equal(
-            [
+        // Probe files are contributed by parallel tasks, so this asserts the discovery
+        // contract (deterministic type-name order) and the T1 exemplars rather than an exact
+        // registry of every probe.
+        var probes = ProbeRunner.DiscoverProbes();
+        var typeNames = probes.Select(p => p.GetType().FullName!).ToList();
+        Assert.Equal(typeNames.OrderBy(n => n, StringComparer.Ordinal), typeNames);
+
+        var keys = probes.Select(p => p.OperationKey).ToHashSet(StringComparer.Ordinal);
+        Assert.Superset(
+            new HashSet<string>(StringComparer.Ordinal)
+            {
                 DdlOperationKeys.AddColumnNotNullDefaultConst,
                 DdlOperationKeys.AddColumnNullable,
                 DdlOperationKeys.CreateNonclusteredIndexOffline,
-            ],
+            },
             keys);
     }
 
