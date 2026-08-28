@@ -1,6 +1,6 @@
 # Planizer — composite GitHub Action. Marketplace metadata: name/description/branding below.
 name: Planizer
-description: Lint SQL Server/T-SQL migrations before they run: locking, rewrite vs metadata-only, reversibility. Offline; SARIF for CI.
+description: 'Lint SQL Server/T-SQL migrations before they run: locking, rewrite vs metadata-only, reversibility. Offline; SARIF for CI.'
 author: Mustafa Basaran
 
 branding:
