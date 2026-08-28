@@ -1,9 +1,5 @@
 name: Planizer
-description: >-
-  Validate and explain SQL Server migration scripts before they run: lock level,
-  rewrite vs metadata-only, reversibility, idempotency, batch/GO and transaction
-  hygiene. Deterministic rules, offline, no LLM. Writes a SARIF 2.1.0 report for
-  GitHub code scanning and fails the step according to the fail-on threshold.
+description: Lint SQL Server/T-SQL migrations before they run: locking, rewrite vs metadata-only, reversibility. Offline; SARIF for CI.
 author: Mustafa Basaran
 
 branding:
