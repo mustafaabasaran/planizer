@@ -54,15 +54,32 @@ Design decisions:
   `sarif` for GitHub code scanning and IDE problem panes; exit codes for CI.
 - **Suppressions and config** — `-- planizer:ignore RULE reason` on a statement,
   `.planizer.json` per directory for version, edition and per-rule overrides.
-- **A composite GitHub Action** — `uses: mustafaabasaran/planizer@v0.1.0` builds the CLI from source,
+- **A composite GitHub Action** — `uses: mustafaabasaran/planizer@v0.1.1` builds the CLI from source,
   fails the job on findings above a threshold and writes SARIF for `upload-sarif`.
 
 ## Install
 
-Planizer is a .NET 10 CLI packaged as a `dotnet tool`, built against the current LTS runtime and
-rolling forward to newer majors (`RollForward=LatestMajor`), so it also runs on whatever later
-.NET is already installed on a build agent. It is **not yet published to NuGet.org**; until then,
-build and install it from source:
+**Prebuilt binary — no .NET required.** Every release ships a self-contained Native AOT binary
+per platform (Linux x64/arm64, Windows x64, macOS arm64) plus a `SHA256SUMS.txt`, under
+[Releases](https://github.com/mustafaabasaran/planizer/releases):
+
+```sh
+curl -fsSLO https://github.com/mustafaabasaran/planizer/releases/download/v0.1.1/planizer-v0.1.1-linux-x64.tar.gz
+tar xzf planizer-v0.1.1-linux-x64.tar.gz
+./planizer analyze migrations/
+```
+
+**Docker — no toolchain at all.** Multi-arch (amd64/arm64) image on ghcr.io, tagged `latest` and
+per release; mount the directory to analyze on `/work`:
+
+```sh
+docker run --rm -v "$PWD:/work" ghcr.io/mustafaabasaran/planizer:latest analyze .
+```
+
+**dotnet tool.** Planizer is a .NET 10 CLI packaged as a `dotnet tool`, built against the current
+LTS runtime and rolling forward to newer majors (`RollForward=LatestMajor`), so it also runs on
+whatever later .NET is already installed on a build agent. It is **not yet published to
+NuGet.org**; until then, build and install it from source:
 
 ```sh
 git clone <this repo> && cd planizer
@@ -291,7 +308,7 @@ jobs:
 
       - name: Planizer
         id: planizer
-        uses: mustafaabasaran/planizer@v0.1.0   # pin a tag or commit SHA in real pipelines
+        uses: mustafaabasaran/planizer@v0.1.1   # pin a tag or commit SHA in real pipelines
         with:
           path: migrations
           target-version: '2019'

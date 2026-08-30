@@ -6,7 +6,7 @@
       "tool": {
         "driver": {
           "name": "Planizer",
-          "semanticVersion": "0.1.0",
+          "semanticVersion": "0.1.1",
           "informationUri": "https://github.com/mustafaabasaran/planizer",
           "rules": [
             {
@@ -479,12 +479,12 @@
             },
             {
               "id": "MSSQL-RW-009",
-              "name": "Changing a column collation rewrites the column and needs dependent indexes dropped",
+              "name": "Changing a column collation may convert the data and needs dependent objects dropped",
               "shortDescription": {
-                "text": "Changing a column collation rewrites the column and needs dependent indexes dropped"
+                "text": "Changing a column collation may convert the data and needs dependent objects dropped"
               },
               "defaultConfiguration": {
-                "level": "error"
+                "level": "warning"
               },
               "properties": {
                 "docs": "docs/rules/MSSQL-RW-009.md"
@@ -708,7 +708,7 @@
       ],
       "originalUriBaseIds": {
         "%SRCROOT%": {
-          "uri": "file:///workspace/planizer/"
+          "uri": "file:///Users/mustafabasaran/Workspace/planizer/samples/"
         }
       },
       "results": [
@@ -723,7 +723,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/005_bad_batching.sql",
+                  "uri": "005_bad_batching.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -751,7 +751,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/005_bad_batching.sql",
+                  "uri": "005_bad_batching.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -779,7 +779,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/005_bad_batching.sql",
+                  "uri": "005_bad_batching.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -807,7 +807,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/005_bad_batching.sql",
+                  "uri": "005_bad_batching.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -835,7 +835,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/001_add_status_column.sql",
+                  "uri": "001_add_status_column.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -863,7 +863,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/002_rebuild_indexes.sql",
+                  "uri": "002_rebuild_indexes.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -891,7 +891,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/004_idempotent_migration.sql",
+                  "uri": "004_idempotent_migration.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -919,7 +919,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/001_add_status_column.sql",
+                  "uri": "001_add_status_column.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -947,7 +947,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/002_rebuild_indexes.sql",
+                  "uri": "002_rebuild_indexes.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -975,7 +975,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/002_rebuild_indexes.sql",
+                  "uri": "002_rebuild_indexes.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -1003,7 +1003,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/005_bad_batching.sql",
+                  "uri": "005_bad_batching.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -1031,7 +1031,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/001_add_status_column.sql",
+                  "uri": "001_add_status_column.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -1059,7 +1059,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/001_add_status_column.sql",
+                  "uri": "001_add_status_column.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -1087,7 +1087,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/005_bad_batching.sql",
+                  "uri": "005_bad_batching.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -1115,7 +1115,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/003_cleanup_legacy.sql",
+                  "uri": "003_cleanup_legacy.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -1143,7 +1143,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/005_bad_batching.sql",
+                  "uri": "005_bad_batching.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -1171,7 +1171,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/001_add_status_column.sql",
+                  "uri": "001_add_status_column.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -1199,7 +1199,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/001_add_status_column.sql",
+                  "uri": "001_add_status_column.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -1227,7 +1227,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/003_cleanup_legacy.sql",
+                  "uri": "003_cleanup_legacy.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -1255,7 +1255,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/003_cleanup_legacy.sql",
+                  "uri": "003_cleanup_legacy.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -1283,7 +1283,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/003_cleanup_legacy.sql",
+                  "uri": "003_cleanup_legacy.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -1311,7 +1311,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/004_idempotent_migration.sql",
+                  "uri": "004_idempotent_migration.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -1339,7 +1339,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/004_idempotent_migration.sql",
+                  "uri": "004_idempotent_migration.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -1367,7 +1367,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/005_bad_batching.sql",
+                  "uri": "005_bad_batching.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -1395,7 +1395,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/001_add_status_column.sql",
+                  "uri": "001_add_status_column.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -1423,7 +1423,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/002_rebuild_indexes.sql",
+                  "uri": "002_rebuild_indexes.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -1451,7 +1451,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/004_idempotent_migration.sql",
+                  "uri": "004_idempotent_migration.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -1479,7 +1479,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/002_rebuild_indexes.sql",
+                  "uri": "002_rebuild_indexes.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -1507,7 +1507,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/002_rebuild_indexes.sql",
+                  "uri": "002_rebuild_indexes.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -1535,7 +1535,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/001_add_status_column.sql",
+                  "uri": "001_add_status_column.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -1563,7 +1563,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/005_bad_batching.sql",
+                  "uri": "005_bad_batching.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -1591,7 +1591,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/003_cleanup_legacy.sql",
+                  "uri": "003_cleanup_legacy.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -1625,7 +1625,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/003_cleanup_legacy.sql",
+                  "uri": "003_cleanup_legacy.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -1659,7 +1659,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/003_cleanup_legacy.sql",
+                  "uri": "003_cleanup_legacy.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -1693,7 +1693,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/003_cleanup_legacy.sql",
+                  "uri": "003_cleanup_legacy.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -1727,7 +1727,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/001_add_status_column.sql",
+                  "uri": "001_add_status_column.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -1755,7 +1755,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/004_idempotent_migration.sql",
+                  "uri": "004_idempotent_migration.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -1783,7 +1783,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/005_bad_batching.sql",
+                  "uri": "005_bad_batching.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -1811,7 +1811,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/001_add_status_column.sql",
+                  "uri": "001_add_status_column.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -1839,7 +1839,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/002_rebuild_indexes.sql",
+                  "uri": "002_rebuild_indexes.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -1867,7 +1867,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/004_idempotent_migration.sql",
+                  "uri": "004_idempotent_migration.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -1895,7 +1895,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/001_add_status_column.sql",
+                  "uri": "001_add_status_column.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -1923,7 +1923,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/001_add_status_column.sql",
+                  "uri": "001_add_status_column.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -1951,7 +1951,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/004_idempotent_migration.sql",
+                  "uri": "004_idempotent_migration.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -1979,7 +1979,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/005_bad_batching.sql",
+                  "uri": "005_bad_batching.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -2007,7 +2007,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/005_bad_batching.sql",
+                  "uri": "005_bad_batching.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
@@ -2035,7 +2035,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "samples/005_bad_batching.sql",
+                  "uri": "005_bad_batching.sql",
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
