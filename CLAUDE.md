@@ -266,3 +266,22 @@ Inconclusive. The project's oldest open question (Docker validation of the catal
 the weekly cron keeps it honest. Repo is live (private) at github.com/mustafaabasaran/planizer;
 the public flip is a one-command decision.
 
+**Public release (2026-08-28):** repo public, v0.1.0 release published, GitHub Marketplace listing
+live (github.com/marketplace/actions/planizer), commit history rewritten once to the personal
+e-mail before going public (no further history rewrites). NuGet.org publish still waits on an API
+key.
+
+**Distribution: Native AOT + Docker (2026-08-30):** the CLI is AOT-clean — rule discovery moved
+from reflection (`Assembly.GetTypes`, which trimming silently reduced to 1 of 53 rules) to an
+explicit `RuleRegistry` guarded by a reflection-comparison test; JSON report/config moved to
+source-generated System.Text.Json (config properties became `set` because the generated
+deserializer clobbers init-only defaults — that FP was caught by `ConfigTests`); Core/MsSql build
+with `IsAotCompatible`, so new reflection is a compile error. ScriptDom itself trims clean with
+zero warnings. Verified against a real osx-arm64 AOT build: 53 rules, text/markdown/sarif output
+byte-identical to managed, ~16x faster startup. `release.yml` (AOT binaries for
+linux-x64/linux-arm64/win-x64/osx-arm64 + SHA256SUMS attached on a `v*` tag) and `docker.yml`
+(multi-arch ghcr.io image from native runners, chiseled-extra base) are both in place and
+rehearsed green via `workflow_dispatch`. First real publish lands with the next tag — v0.1.0
+predates the registry fix, so it gets no binaries. After the first image push, flip the ghcr
+package to public once in the package settings.
+

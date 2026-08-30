@@ -180,14 +180,22 @@ architectural one: the fewer prerequisites a CI agent needs, the more places it 
       rather than demanding the exact major it was built against.
 - [x] Build the CLI from a located path (never a literal `bin/Release/<tfm>/`) in `action.yml`
       and `scripts/corpus-scan.sh`, so a future runtime bump cannot break them silently.
-- [ ] Native AOT single binary per platform, attached to GitHub Releases — no .NET on the agent
-      at all. **AOT-readiness is done:** ScriptDom survives trimming with zero warnings (verified
-      with a real `PublishAot` build), rule discovery is an explicit registry instead of
-      reflection (the trimmer had silently dropped 52 of 53 rules), JSON report/config use
-      source-generated serialization, and the class libraries build with `IsAotCompatible` so new
-      reflection is a compile error. Remaining: the release workflow that publishes per-platform
-      binaries. Side benefit: the native binary starts ~16x faster (no JIT warmup).
-- [ ] Docker image (`ghcr.io`), so `docker run … analyze` works with no toolchain whatsoever.
+- [x] Native AOT single binary per platform, attached to GitHub Releases — no .NET on the agent
+      at all. AOT-readiness: ScriptDom survives trimming with zero warnings (verified with a real
+      `PublishAot` build), rule discovery is an explicit registry instead of reflection (the
+      trimmer had silently dropped 52 of 53 rules), JSON report/config use source-generated
+      serialization, and the class libraries build with `IsAotCompatible` so new reflection is a
+      compile error. `.github/workflows/release.yml` builds linux-x64/linux-arm64/win-x64/osx-arm64
+      on a `v*` tag, smoke-tests each binary (≥ 53 rules, non-empty SARIF) and attaches them plus
+      SHA256SUMS to the release — rehearsed green on all four platforms via `workflow_dispatch`;
+      the first real attach happens on the next tag (v0.1.0 predates the registry fix and cannot
+      get correct AOT binaries). Side benefit: the native binary starts ~16x faster (no JIT warmup).
+- [x] Docker image (`ghcr.io`), so `docker run … analyze` works with no toolchain whatsoever.
+      Multi-stage `Dockerfile` (SDK+clang → chiseled-extra, single native binary, non-root) and
+      `.github/workflows/docker.yml`: amd64 and arm64 built on native runners (no QEMU), pushed by
+      digest on a `v*` tag and merged into one multi-arch tag plus `:latest` — rehearsed green on
+      both arches. First real push happens on the next tag; the ghcr package must be flipped to
+      public once in the package settings afterwards (GITHUB_TOKEN cannot change visibility).
 - [ ] Publish to NuGet.org as `dotnet tool install --global Planizer` (needs an API key);
       afterwards the "build from source" paths in the README and the action can be simplified.
 
