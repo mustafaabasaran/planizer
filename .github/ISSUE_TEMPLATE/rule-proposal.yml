@@ -1,0 +1,44 @@
+name: Rule proposal
+description: A dangerous T-SQL migration behavior Planizer should catch
+title: "[Rule] <short description>"
+labels: [rule-proposal]
+body:
+  - type: textarea
+    id: behavior
+    attributes:
+      label: The dangerous behavior
+      description: What can go wrong in production, and when? Locking, data movement, reversibility, failure risk, version/edition traps…
+    validations:
+      required: true
+  - type: textarea
+    id: trigger-sql
+    attributes:
+      label: SQL that should trigger the rule
+      render: sql
+    validations:
+      required: true
+  - type: textarea
+    id: clean-sql
+    attributes:
+      label: Similar SQL that should NOT trigger it
+      description: The nearest safe variant — this is what keeps the rule free of false positives.
+      render: sql
+    validations:
+      required: true
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Suggested severity
+      options:
+        - Info
+        - Warning
+        - Critical
+        - Blocker
+        - Not sure
+    validations:
+      required: true
+  - type: textarea
+    id: depends
+    attributes:
+      label: Version/edition dependence and sources
+      description: Does the behavior differ by SQL Server version or edition? Links to documentation, or measurements, welcome.

@@ -1,0 +1,51 @@
+name: False positive
+description: A rule fired on SQL it should not have flagged
+title: "[FP] <RULE-ID>: <short description>"
+labels: [false-positive]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks — false-positive reports are the most valuable contribution to Planizer.
+        The minimal SQL you paste below becomes a regression fixture.
+  - type: input
+    id: rule-id
+    attributes:
+      label: Rule id
+      placeholder: MSSQL-LOCK-001
+    validations:
+      required: true
+  - type: textarea
+    id: sql
+    attributes:
+      label: Minimal SQL that triggers the finding
+      description: Trim it as far as you can while the finding still appears. Please anonymize table/column names if needed — the structure is what matters.
+      render: sql
+    validations:
+      required: true
+  - type: textarea
+    id: finding
+    attributes:
+      label: The finding Planizer reported
+      description: Paste the finding line(s) from the output (text or JSON).
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Why this should not fire
+      description: What does SQL Server actually do here? Links to documentation or a measurement are gold.
+    validations:
+      required: true
+  - type: input
+    id: target
+    attributes:
+      label: Target flags
+      description: The --target-version / --edition you analyzed with (or your .planizer.json values).
+      placeholder: "--target-version 2019 --edition standard (defaults, if you passed nothing)"
+  - type: input
+    id: version
+    attributes:
+      label: Planizer version and install channel
+      placeholder: "v0.1.1, Docker image (binary / dotnet tool / GitHub Action / Docker)"

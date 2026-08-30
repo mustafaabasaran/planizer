@@ -1,0 +1,38 @@
+name: Bug report
+description: A crash, a parse error on valid T-SQL, wrong output, or anything else broken
+title: "[Bug] <short description>"
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: Include the full error output or the wrong behavior you saw.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: How to reproduce
+      description: The exact command line, and the SQL input if it is part of the reproduction.
+      render: text
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Planizer version and install channel
+      placeholder: "v0.1.1, binary (binary / dotnet tool / GitHub Action / Docker)"
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: OS / environment
+      placeholder: "ubuntu-latest on GitHub Actions / Windows 11 / macOS 15 …"

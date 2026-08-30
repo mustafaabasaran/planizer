@@ -506,6 +506,14 @@ and fails only when a measurement contradicts a catalog row. These tests never r
 without `PLANIZER_CATALOG_VERIFY=1` (set only in that workflow) every probe test skips and no
 container is started.
 
+## Contributing
+
+The most valuable contribution is a **false-positive report**: the issue form asks for the
+minimal SQL, and that SQL becomes a regression fixture. Rule proposals and code are just as
+welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) for the anatomy of a rule (catalog row →
+fixtures → rule class → registry line → doc page) and the project's ground rules. Questions and
+ideas go to [Discussions](https://github.com/mustafaabasaran/planizer/discussions).
+
 ## License
 
 MIT.
