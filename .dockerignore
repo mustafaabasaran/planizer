@@ -1,0 +1,13 @@
+# Only src/, Directory.Build.props and the LICENSE/README are needed for the image build.
+.git
+.github
+**/bin
+**/obj
+**/nupkg
+docs
+samples
+scripts
+tests
+Dockerfile
+*.md
+!README.md
