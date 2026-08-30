@@ -1,0 +1,104 @@
+name: Release binaries
+
+# Builds a Native AOT single-file binary per platform and attaches them (plus a checksum file)
+# to the GitHub Release for the pushed tag. Runs after a release tag is created — in the normal
+# flow the release is drafted and published in the UI (Marketplace), which creates the tag.
+# workflow_dispatch builds and smoke-tests the binaries but only uploads them as workflow
+# artifacts, so a build can be rehearsed without a release.
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: ${{ matrix.rid }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            rid: linux-x64
+          - os: ubuntu-24.04-arm
+            rid: linux-arm64
+          - os: windows-latest
+            rid: win-x64
+          - os: macos-latest
+            rid: osx-arm64
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Publish Native AOT
+        run: dotnet publish src/Planizer.Cli -c Release -r ${{ matrix.rid }} /p:PublishAot=true -o publish
+
+      # The binary must behave exactly like the managed build; trimming bugs tend to be silent
+      # (the first AOT build shipped 1 of 53 rules), so assert the rule count and a real analyze.
+      - name: Smoke test
+        shell: bash
+        run: |
+          BIN=publish/Planizer.Cli
+          [ -f "$BIN.exe" ] && BIN="$BIN.exe"
+          COUNT=$("$BIN" rules | grep -c "MSSQL-")
+          test "$COUNT" -ge 53 || { echo "expected >= 53 rules, binary reports $COUNT — trimming removed rules"; exit 1; }
+          "$BIN" analyze samples --output sarif --no-progress > smoke.sarif || true
+          PY=$(command -v python3 || command -v python)
+          "$PY" -c 'import json, sys; d = json.load(open("smoke.sarif")); n = len(d["runs"][0]["results"]); print(n, "SARIF results"); sys.exit(0 if n > 0 else 1)'
+
+      - name: Package
+        shell: bash
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          NAME="planizer-${TAG}-${{ matrix.rid }}"
+          mkdir -p dist
+          if [ -f publish/Planizer.Cli.exe ]; then
+            mv publish/Planizer.Cli.exe "planizer.exe"
+            7z a "dist/${NAME}.zip" planizer.exe LICENSE README.md
+          else
+            mv publish/Planizer.Cli planizer
+            chmod +x planizer
+            tar czf "dist/${NAME}.tar.gz" planizer LICENSE README.md
+          fi
+
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: planizer-${{ matrix.rid }}
+          path: dist/*
+          if-no-files-found: error
+
+  attach:
+    name: Attach to release
+    if: github.event_name == 'push'
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Checksums
+        working-directory: dist
+        run: sha256sum planizer-* > SHA256SUMS.txt
+
+      - name: Upload to the GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          # The release normally already exists (publishing it in the UI is what created the
+          # tag); create it only if the tag was pushed directly.
+          gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1 \
+            || gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --verify-tag --generate-notes
+          gh release upload "$TAG" dist/* --repo "$GITHUB_REPOSITORY" --clobber
