@@ -181,8 +181,12 @@ architectural one: the fewer prerequisites a CI agent needs, the more places it 
 - [x] Build the CLI from a located path (never a literal `bin/Release/<tfm>/`) in `action.yml`
       and `scripts/corpus-scan.sh`, so a future runtime bump cannot break them silently.
 - [ ] Native AOT single binary per platform, attached to GitHub Releases — no .NET on the agent
-      at all. Needs a check that ScriptDom survives trimming; the fallback is a self-contained
-      (non-trimmed) publish.
+      at all. **AOT-readiness is done:** ScriptDom survives trimming with zero warnings (verified
+      with a real `PublishAot` build), rule discovery is an explicit registry instead of
+      reflection (the trimmer had silently dropped 52 of 53 rules), JSON report/config use
+      source-generated serialization, and the class libraries build with `IsAotCompatible` so new
+      reflection is a compile error. Remaining: the release workflow that publishes per-platform
+      binaries. Side benefit: the native binary starts ~16x faster (no JIT warmup).
 - [ ] Docker image (`ghcr.io`), so `docker run … analyze` works with no toolchain whatsoever.
 - [ ] Publish to NuGet.org as `dotnet tool install --global Planizer` (needs an API key);
       afterwards the "build from source" paths in the README and the action can be simplified.

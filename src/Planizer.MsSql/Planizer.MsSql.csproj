@@ -1,5 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <PropertyGroup>
+    <!-- Trim/AOT analyzers on every build: with TreatWarningsAsErrors this makes new
+         reflection use a compile error instead of a silently broken native binary. -->
+    <IsAotCompatible>true</IsAotCompatible>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Planizer.Core\Planizer.Core.csproj" />
   </ItemGroup>

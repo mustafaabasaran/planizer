@@ -348,12 +348,7 @@ public sealed class MsSqlAnalyzer
 
     /// <summary>All rules in this assembly, ordered by rule id (also used by <c>planizer rules</c>).</summary>
     public static IReadOnlyList<MsSqlRuleBase> DiscoverRules()
-        => typeof(MsSqlAnalyzer).Assembly
-            .GetTypes()
-            .Where(t => !t.IsAbstract
-                && t.IsAssignableTo(typeof(MsSqlRuleBase))
-                && t.GetConstructor(Type.EmptyTypes) is not null)
-            .Select(t => (MsSqlRuleBase)Activator.CreateInstance(t)!)
+        => RuleRegistry.CreateAll()
             .OrderBy(r => r.Id, StringComparer.Ordinal)
             .ToList();
 

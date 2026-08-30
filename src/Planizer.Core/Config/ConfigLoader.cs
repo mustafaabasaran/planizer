@@ -11,8 +11,6 @@ public static class ConfigLoader
 {
     public const string DefaultFileName = ".planizer.json";
 
-    private static readonly JsonSerializerOptions SerializerOptions = CreateOptions();
-
     /// <summary>Reads and parses a config file. Throws <see cref="FileNotFoundException"/> when missing.</summary>
     public static PlanizerConfig LoadFile(string path)
     {
@@ -26,7 +24,7 @@ public static class ConfigLoader
 
     /// <summary>Parses config JSON. Unknown rule ids are kept as-is; they are not an error.</summary>
     public static PlanizerConfig Parse(string json)
-        => JsonSerializer.Deserialize<PlanizerConfig>(json, SerializerOptions) ?? new PlanizerConfig();
+        => JsonSerializer.Deserialize(json, ConfigJsonContext.Default.PlanizerConfig) ?? new PlanizerConfig();
 
     /// <summary>CLI arguments win over config-file values; <c>null</c> means "not given on the CLI".</summary>
     public static PlanizerConfig ApplyOverrides(
@@ -45,25 +43,7 @@ public static class ConfigLoader
             FailOn = failOn ?? config.FailOn,
         };
 
-    private static JsonSerializerOptions CreateOptions()
-    {
-        var options = new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            PropertyNameCaseInsensitive = true,
-            ReadCommentHandling = JsonCommentHandling.Skip,
-            AllowTrailingCommas = true,
-        };
-
-        // Specific converters first: they accept the user-facing tokens ("2019", "azure",
-        // "developer") in addition to enum member names.
-        options.Converters.Add(new SqlServerVersionConverter());
-        options.Converters.Add(new SqlEditionConverter());
-        options.Converters.Add(new JsonStringEnumConverter());
-        return options;
-    }
-
-    private sealed class SqlServerVersionConverter : JsonConverter<SqlServerVersion>
+    internal sealed class SqlServerVersionConverter : JsonConverter<SqlServerVersion>
     {
         public override SqlServerVersion Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
@@ -92,7 +72,7 @@ public static class ConfigLoader
             => writer.WriteStringValue(TargetParser.VersionToken(value));
     }
 
-    private sealed class SqlEditionConverter : JsonConverter<SqlEdition>
+    internal sealed class SqlEditionConverter : JsonConverter<SqlEdition>
     {
         public override SqlEdition Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
@@ -110,3 +90,19 @@ public static class ConfigLoader
             => writer.WriteStringValue(TargetParser.EditionToken(value));
     }
 }
+
+/// <summary>
+/// Source-generated deserialization so <c>.planizer.json</c> parsing survives Native AOT.
+/// The specific converters come first: they accept the user-facing tokens ("2019", "azure",
+/// "developer") in addition to enum member names; every other enum falls back to the generated
+/// string converter.
+/// </summary>
+[JsonSourceGenerationOptions(
+    PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,
+    PropertyNameCaseInsensitive = true,
+    ReadCommentHandling = JsonCommentHandling.Skip,
+    AllowTrailingCommas = true,
+    UseStringEnumConverter = true,
+    Converters = new[] { typeof(ConfigLoader.SqlServerVersionConverter), typeof(ConfigLoader.SqlEditionConverter) })]
+[JsonSerializable(typeof(PlanizerConfig))]
+internal sealed partial class ConfigJsonContext : JsonSerializerContext;
